@@ -19,7 +19,7 @@ async function handlePornRequest(client, msg) {
       logger.info(`requested porn "${query}"`);
 
       const search = Pornsearch.search(query);
-      const gifs = await search.gifs(getRandomInt(1, 20));
+      const gifs = await search.gifs(getRandomInt(1, 5));
 
       const items = gifs.filter(({ url }) => !url.includes("undefined"));
       const { url } = items[Math.floor(Math.random() * items.length)];

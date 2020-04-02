@@ -8,7 +8,7 @@ function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-async function handlePortRequest(client, msg) {
+async function handlePornRequest(client, msg) {
   const { content } = msg;
 
   if (content.startsWith("plsky")) {
@@ -23,12 +23,14 @@ async function handlePortRequest(client, msg) {
 
       const items = gifs.filter(({ url }) => !url.includes("undefined"));
       const { url } = items[Math.floor(Math.random() * items.length)];
+      logger.info("got url", url);
 
       const embed = new MessageEmbed(url);
       embed.setImage(url);
       await msg.channel.send(`${query} ${url}`, {
         embed
       });
+      logger.info("got sent to discord", url);
       setTimeout(() => {
         msg.delete();
       }, 5000);
@@ -37,5 +39,5 @@ async function handlePortRequest(client, msg) {
 }
 
 module.exports = {
-  handlePortRequest
+  handlePornRequest
 };

@@ -4,7 +4,7 @@ const Discord = require("discord.js");
 const { logger } = require("./src/logger");
 const { handleRetardMuting } = require("./src/handleRetardMuting");
 const { handleYoutubeRequest } = require("./src/handleYoutubeRequest");
-const { handlePortRequest } = require("./src/handlePortRequest");
+const { handlePornRequest } = require("./src/handlePornRequest");
 
 const client = new Discord.Client();
 
@@ -30,7 +30,7 @@ client.on("message", async msg => {
   }
   handleRetardMuting(client, msg);
   handleYoutubeRequest(client, msg);
-  handlePortRequest(client, msg);
+  handlePornRequest(client, msg);
 });
 
 client.login(config.token);

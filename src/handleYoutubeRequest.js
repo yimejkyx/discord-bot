@@ -27,6 +27,7 @@ async function playUrl(msg, url, voice) {
     logger.info(replyString);
     setTimeout(() => stop(voice), ytMs);
   } catch (err) {
+    stop(voice);
     logger.error(`got error in youtube play request, ${err}`);
     reply = await msg.reply(
       "Sry, cant play that video, something went wrong :((((("

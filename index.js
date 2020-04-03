@@ -1,10 +1,13 @@
-const config = require("./config.json");
+const { token, cmdPrefix } = require("./config.json");
 const Discord = require("discord.js");
 
 const { logger } = require("./src/logger");
 const { handleRetardMuting } = require("./src/handleRetardMuting");
 const { handleYoutubeRequest } = require("./src/handleYoutubeRequest");
 const { handlePornRequest } = require("./src/handlePornRequest");
+const {
+  handleDeletingLastMessages
+} = require("./src/handleDeletingLastMessages.js");
 
 const client = new Discord.Client();
 
@@ -27,7 +30,7 @@ client.on("message", async msg => {
     logger.info(`message got member '${username}}'`);
   }
 
-  if (content === "help") {
+  if (content === `${cmdPrefix}help`) {
     const reply = await msg.reply("Tromiks je retard");
     setTimeout(() => {
       reply.delete();
@@ -38,6 +41,7 @@ client.on("message", async msg => {
   handleRetardMuting(client, msg);
   handleYoutubeRequest(client, msg);
   handlePornRequest(client, msg);
+  handleDeletingLastMessages(client, msg);
 });
 
-client.login(config.token);
+client.login(token);

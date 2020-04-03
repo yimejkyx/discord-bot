@@ -1,5 +1,6 @@
 const ytdl = require("ytdl-core");
 const { logger } = require("./logger");
+const { cmdPrefix } = require("../config.json");
 
 let connection = null;
 
@@ -47,7 +48,7 @@ async function handleYoutubeRequest(client, msg) {
     const { content } = msg;
     const { voice } = member;
 
-    if (content === "stop") {
+    if (content === `${cmdPrefix}stop`) {
       const reply = await msg.reply("stoping actual video");
       logger.info("stop video executed");
 
@@ -58,7 +59,7 @@ async function handleYoutubeRequest(client, msg) {
       await stop(voice);
     }
 
-    if (content.startsWith("play")) {
+    if (content.startsWith(`${cmdPrefix}play`)) {
       if (voice.channel) {
         if (!connection) {
           const split = content.replace(/\s\s+/g, " ").split(" ");

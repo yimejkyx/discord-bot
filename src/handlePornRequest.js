@@ -1,6 +1,7 @@
 const { logger } = require("./logger");
 const { MessageEmbed } = require("discord.js");
 const Pornsearch = require("pornsearch");
+const { cmdPrefix } = require("../config.json");
 
 function getRandomInt(min, max) {
   min = Math.ceil(min);
@@ -11,7 +12,7 @@ function getRandomInt(min, max) {
 async function handlePornRequest(client, msg) {
   const { content } = msg;
 
-  if (content.startsWith("plsky")) {
+  if (content.startsWith(`${cmdPrefix}plsky`)) {
     const split = content.replace(/\s\s+/g, " ").split(" ");
     if (split.length >= 2) {
       const [, ...parsed] = split;

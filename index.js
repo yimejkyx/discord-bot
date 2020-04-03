@@ -20,7 +20,7 @@ client.on("ready", () => {
 
 client.on("message", async msg => {
   const { content, member } = msg;
-  logger.info(`recieved message "${msg}"`);
+  logger.info(`recieved message "${msg}", "${msg.channel}"`);
 
   if (member) {
     const { username } = member.user;

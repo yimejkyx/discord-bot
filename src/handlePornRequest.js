@@ -18,6 +18,7 @@ async function handlePornRequest(client, msg) {
       const query = parsed.join(" ");
       logger.info(`requested porn "${query}"`);
 
+      let reply = null;
       try {
         const search = Pornsearch.search(query);
         const gifs = await search.gifs(getRandomInt(1, 5));
@@ -32,11 +33,13 @@ async function handlePornRequest(client, msg) {
           embed
         });
         logger.info("got sent to discord", url);
-      } catch (e) {
-        logger.error("got error in porn request", e);
+      } catch (err) {
+        logger.error(`got error in porn request, ${err}`);
+        reply = msg.reply("Sry, cant find your kinky shit");
       }
 
       setTimeout(() => {
+        if (reply) reply.delete();
         msg.delete();
       }, 5000);
     }

@@ -35,7 +35,7 @@ async function handlePornRequest(client, msg) {
         logger.info("got sent to discord", url);
       } catch (err) {
         logger.error(`got error in porn request, ${err}`);
-        reply = msg.reply("Sry, cant find your kinky shit");
+        reply = await msg.reply("Sry, cant find your kinky shit");
       }
 
       setTimeout(() => {

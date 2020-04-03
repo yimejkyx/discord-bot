@@ -33,41 +33,47 @@ async function playUrl(msg, url, voice) {
 }
 
 async function handleYoutubeRequest(client, msg) {
-  const { content, member } = msg;
-  const { voice } = member;
+  const { member } = msg;
 
-  if (content === "stop") {
-    const reply = await msg.reply("stoping actual video");
-    logger.info("stop video executed");
+  if (member) {
+    const { content } = msg;
+    const { voice } = member;
 
-    setTimeout(() => {
-      reply.delete();
-      msg.delete();
-    }, 5000);
-    await stop(voice);
-  }
+    if (content === "stop") {
+      const reply = await msg.reply("stoping actual video");
+      logger.info("stop video executed");
 
-  if (content.startsWith("play")) {
-    if (voice.channel) {
-      if (!connection) {
-        const split = content.replace(/\s\s+/g, " ").split(" ");
-        if (split.length >= 2) {
-          const [, url] = split;
-          await playUrl(msg, url, voice);
+      setTimeout(() => {
+        reply.delete();
+        msg.delete();
+      }, 5000);
+      await stop(voice);
+    }
+
+    if (content.startsWith("play")) {
+      if (voice.channel) {
+        if (!connection) {
+          const split = content.replace(/\s\s+/g, " ").split(" ");
+          if (split.length >= 2) {
+            const [, url] = split;
+            await playUrl(msg, url, voice);
+          }
+        } else {
+          const reply = await msg.reply("Cant play another video!");
+          setTimeout(() => {
+            reply.delete();
+            msg.delete();
+          }, 5000);
         }
       } else {
-        const reply = await msg.reply("Cant play another video!");
+        const reply = await msg.reply(
+          "You need to join a voice channel first!"
+        );
         setTimeout(() => {
           reply.delete();
           msg.delete();
         }, 5000);
       }
-    } else {
-      const reply = await msg.reply("You need to join a voice channel first!");
-      setTimeout(() => {
-        reply.delete();
-        msg.delete();
-      }, 5000);
     }
   }
 }

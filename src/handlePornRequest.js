@@ -18,19 +18,24 @@ async function handlePornRequest(client, msg) {
       const query = parsed.join(" ");
       logger.info(`requested porn "${query}"`);
 
-      const search = Pornsearch.search(query);
-      const gifs = await search.gifs(getRandomInt(1, 5));
+      try {
+        const search = Pornsearch.search(query);
+        const gifs = await search.gifs(getRandomInt(1, 5));
 
-      const items = gifs.filter(({ url }) => !url.includes("undefined"));
-      const { url } = items[Math.floor(Math.random() * items.length)];
-      logger.info("got url", url);
+        const items = gifs.filter(({ url }) => !url.includes("undefined"));
+        const { url } = items[Math.floor(Math.random() * items.length)];
+        logger.info("got url", url);
 
-      const embed = new MessageEmbed(url);
-      embed.setImage(url);
-      await msg.channel.send(`${query} ${url}`, {
-        embed
-      });
-      logger.info("got sent to discord", url);
+        const embed = new MessageEmbed(url);
+        embed.setImage(url);
+        await msg.channel.send(`${query} ${url}`, {
+          embed
+        });
+        logger.info("got sent to discord", url);
+      } catch (e) {
+        logger.error("got error in porn request", e);
+      }
+
       setTimeout(() => {
         msg.delete();
       }, 5000);

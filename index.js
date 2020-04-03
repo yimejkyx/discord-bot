@@ -20,14 +20,21 @@ client.on("ready", () => {
 
 client.on("message", async msg => {
   const { content, member } = msg;
-  const { username } = member.user;
-
   logger.info(`recieved message "${msg}"`);
-  logger.info({ username, content });
+
+  if (member) {
+    const { username } = member.user;
+    logger.info(`got member`, { username, content });
+  }
 
   if (content === "help") {
-    msg.reply("Tromiks je retard");
+    const reply = await msg.reply("Tromiks je retard");
+    setTimeout(() => {
+      reply.delete();
+      msg.delete();
+    }, 5000);
   }
+
   handleRetardMuting(client, msg);
   handleYoutubeRequest(client, msg);
   handlePornRequest(client, msg);

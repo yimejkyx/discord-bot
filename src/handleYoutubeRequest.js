@@ -15,21 +15,28 @@ async function stop(voice) {
 async function playUrl(msg, url, voice) {
   connection = await voice.channel.join();
 
-  const ytInfo = await ytdl.getInfo(await ytdl.getURLVideoID(url));
-  const ytSong = ytdl(url, { filter: "audioonly" });
-  connection.play(ytSong);
+  let reply = null;
+  try {
+    const ytInfo = await ytdl.getInfo(await ytdl.getURLVideoID(url));
+    const ytSong = ytdl(url, { filter: "audioonly" });
+    connection.play(ytSong);
 
-  const ytMs = (Number.parseFloat(ytInfo.length_seconds) + 1) * 1000;
-  const replyString = `playing '${ytInfo.title}' for ${ytInfo.length_seconds}s`;
-  const reply = await msg.reply(replyString);
-  logger.info(replyString);
+    const ytMs = (Number.parseFloat(ytInfo.length_seconds) + 1) * 1000;
+    const replyString = `playing '${ytInfo.title}' for ${ytInfo.length_seconds}s`;
+    reply = await msg.reply(replyString);
+    logger.info(replyString);
+    setTimeout(() => stop(voice), ytMs);
+  } catch (err) {
+    logger.error(`got error in youtube play request, ${err}`);
+    reply = await msg.reply(
+      "Sry, cant play that video, something went wrong :((((("
+    );
+  }
 
   setTimeout(() => {
     reply.delete();
     msg.delete();
   }, 5000);
-
-  setTimeout(() => stop(voice), ytMs);
 }
 
 async function handleYoutubeRequest(client, msg) {

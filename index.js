@@ -24,7 +24,7 @@ client.on("message", async msg => {
 
   if (member) {
     const { username } = member.user;
-    logger.info(`got member`, { username, content });
+    logger.info(`message got member ${{ username, content }}`);
   }
 
   if (content === "help") {

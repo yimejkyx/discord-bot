@@ -22,11 +22,18 @@ async function playUrl(msg, url, voice) {
     const ytSong = ytdl(url, { filter: "audioonly" });
     connection.play(ytSong);
 
-    const ytMs = (Number.parseFloat(ytInfo.length_seconds) + 1) * 1000;
-    const replyString = `playing '${ytInfo.title}' for ${ytInfo.length_seconds}s`;
-    reply = await msg.reply(replyString);
-    logger.info(replyString);
-    setTimeout(() => stop(voice), ytMs);
+    const parsedLengthSeconds = Number.parseFloat(ytInfo.length_seconds);
+    if (parsedLengthSeconds > 0) {
+      const ytMs = (parsedLengthSeconds + 1) * 1000;
+      const replyString = `playing '${ytInfo.title}' for ${ytMs / 1000}s`;
+      reply = await msg.reply(replyString);
+      logger.info(replyString);
+      setTimeout(() => stop(voice), ytMs);
+    } else {
+      const replyString = `playing '${ytInfo.title}' for unlimited`;
+      reply = await msg.reply(replyString);
+      logger.info(replyString);
+    }
   } catch (err) {
     stop(voice);
     logger.error(`got error in youtube play request, ${err}`);
@@ -88,5 +95,5 @@ async function handleYoutubeRequest(client, msg) {
 }
 
 module.exports = {
-  handleYoutubeRequest
+  handleYoutubeRequest,
 };

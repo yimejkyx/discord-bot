@@ -6,8 +6,9 @@ const { handleRetardMuting } = require("./src/handleRetardMuting");
 const { handleYoutubeRequest } = require("./src/handleYoutubeRequest");
 const { handlePornRequest } = require("./src/handlePornRequest");
 const {
-  handleDeletingLastMessages
+  handleDeletingLastMessages,
 } = require("./src/handleDeletingLastMessages.js");
+const { handlePressF } = require("./src/handlePressF");
 
 const client = new Discord.Client();
 
@@ -21,7 +22,7 @@ client.on("ready", () => {
   //   });
 });
 
-client.on("message", async msg => {
+client.on("message", async (msg) => {
   const { content, member } = msg;
   logger.info(`recieved message "${msg}", "${msg.channel}"`);
 
@@ -42,6 +43,7 @@ client.on("message", async msg => {
   handleYoutubeRequest(client, msg);
   handlePornRequest(client, msg);
   handleDeletingLastMessages(client, msg);
+  handlePressF(client, msg);
 });
 
 client.login(token);

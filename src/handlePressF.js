@@ -35,6 +35,7 @@ async function handlePressF(client, msg) {
         const [count, sumCount] = await increaseCounter(member.id);
         const replyString = `${member.displayName} has paid ${count} times their respects, in total ${sumCount} respects`;
         await channel.send(replyString);
+        await msg.delete();
       }
     }
   }

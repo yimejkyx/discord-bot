@@ -8,6 +8,7 @@ const { handlePornRequest } = require("./src/handlePornRequest");
 const {
   handleDeletingLastMessages,
 } = require("./src/handleDeletingLastMessages.js");
+const { handleDotaMatches, startCronDotaMatches } = require('./src/handleDotaMatches');
 const { handlePressF } = require("./src/handlePressF");
 
 const client = new Discord.Client();
@@ -15,6 +16,8 @@ const client = new Discord.Client();
 client.on("ready", () => {
   logger.info("Connected");
   logger.info(`Logged in as ${client.user.tag}!`);
+
+  startCronDotaMatches(client);
 
   //   console.log(client.guilds.cache.array());
   //   client.guilds.cache.array().forEach(async guild => {
@@ -39,11 +42,13 @@ client.on("message", async (msg) => {
     }, 5000);
   }
 
+  // handlers
   handleRetardMuting(client, msg);
   handleYoutubeRequest(client, msg);
   handlePornRequest(client, msg);
   handleDeletingLastMessages(client, msg);
   handlePressF(client, msg);
+  handleDotaMatches(client, msg);
 });
 
 client.login(token);

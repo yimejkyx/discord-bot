@@ -12,13 +12,16 @@ async function fetchDotaMatches() {
       url: wikiNipUrl,
       headers: {
         "Accept-Encoding": "gzip",
+        "User-Agent": "PersonalDiscordBot/0.1 (nikolas.tsk@gmail.com)"
       }
     });
 
+    logger.debug('DEBUG got response');
     const html = response.data.parse.text["*"];
     const content = $.load(html)('div.fo-nttax-infobox-wrapper table.infobox_matches_content')
     const matches = []
 
+    logger.debug('DEBUG parsing content');
     content.each((_, el) => {
       const teamLeft = $(el).find('.team-left');
       const teamRight = $(el).find('.team-right');
@@ -36,10 +39,10 @@ async function fetchDotaMatches() {
       }
     });
 
-    logger.info("done fetching dota matches")
+    logger.info("done fetching dota matches");
     return matches;
   } catch (e) {
-    logger.error("error fetching dota matches", e)
+    logger.error("error fetching dota matches", e);
     return null;
   }
 }

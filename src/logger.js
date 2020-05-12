@@ -9,7 +9,8 @@ module.exports = {
   logger: winston.createLogger({
     transports: [
       new winston.transports.Console({
-        format: winston.format.combine(winston.format.colorize(), logFormat)
+        format: winston.format.combine(winston.format.colorize(), logFormat),
+        level: 'debug'
       })
     ]
   })

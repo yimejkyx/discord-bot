@@ -72,7 +72,12 @@ async function handleYoutubeRequest(client, msg) {
           const split = content.replace(/\s\s+/g, " ").split(" ");
           if (split.length >= 2) {
             const [, url] = split;
-            await playUrl(msg, url, voice);
+            if (url) {
+              logger.info(`plaing "${url}"`);
+              await playUrl(msg, url, voice);
+            } else {
+              logger.error(`invalid url "${url}"`);
+            }
           }
         } else {
           const reply = await msg.reply("Cant play another video!");

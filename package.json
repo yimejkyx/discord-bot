@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
-    "dev": "nodemon index.js",
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
@@ -18,7 +18,7 @@
     "discord.js": "^12.1.1",
     "pornsearch": "^2.4.3",
     "winston": "^3.2.1",
-    "ytdl-core": "^2.0.1"
+    "ytdl-core": "^2.1.7"
   },
   "devDependencies": {
     "nodemon": "^2.0.2"

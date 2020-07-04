@@ -1,15 +1,15 @@
 const { token, cmdPrefix } = require("./config.json");
 const Discord = require("discord.js");
 
-const { logger } = require("./src/logger");
-const { handleRetardMuting } = require("./src/handleRetardMuting");
-const { handleYoutubeRequest } = require("./src/handleYoutubeRequest");
-const { handlePornRequest } = require("./src/handlePornRequest");
+const { logger } = require("./logger");
+const { handleRetardMuting } = require("./handleRetardMuting");
+const { handleYoutubeRequest } = require("./handleYoutubeRequest");
+const { handlePornRequest } = require("./handlePornRequest");
 const {
   handleDeletingLastMessages,
-} = require("./src/handleDeletingLastMessages.js");
-const { handleDotaMatches, startCronDotaMatches } = require('./src/handleDotaMatches');
-const { handlePressF } = require("./src/handlePressF");
+} = require("./handleDeletingLastMessages.js");
+const { handleDotaMatches, startCronDotaMatches } = require('./handleDotaMatches');
+const { handlePressF } = require("./handlePressF");
 
 const client = new Discord.Client();
 

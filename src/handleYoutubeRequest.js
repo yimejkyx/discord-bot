@@ -1,15 +1,19 @@
 const ytdl = require("ytdl-core");
 const { logger } = require("./logger");
-const { cmdPrefix } = require("../config.json");
+const { cmdPrefix } = require("./config.json");
 
 let connection = null;
 
 async function stop(voice) {
-  if (connection) {
-    connection.cleanup();
-    connection = null;
-    await voice.channel.leave();
-    logger.info("video cleaning done");
+  try {
+    if (connection) {
+      connection.cleanup();
+      connection = null;
+      await voice.channel.leave();
+      logger.info("video cleaning done");
+    }
+  } catch (e) {
+    logger.debug('stop error debug', e);
   }
 }
 
@@ -18,8 +22,11 @@ async function playUrl(msg, url, voice) {
 
   let reply = null;
   try {
+    logger.debug('getting video info');
     const ytInfo = await ytdl.getInfo(await ytdl.getURLVideoID(url));
+    logger.debug('getting video audio only');
     const ytSong = ytdl(url, { filter: "audioonly" });
+    logger.debug('playing song to connection');
     connection.play(ytSong);
 
     const parsedLengthSeconds = Number.parseFloat(ytInfo.length_seconds);
@@ -73,7 +80,7 @@ async function handleYoutubeRequest(client, msg) {
           if (split.length >= 2) {
             const [, url] = split;
             if (url) {
-              logger.info(`plaing "${url}"`);
+              logger.info(`playing "${url}"`);
               await playUrl(msg, url, voice);
             } else {
               logger.error(`invalid url "${url}"`);

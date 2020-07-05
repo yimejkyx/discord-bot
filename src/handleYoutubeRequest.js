@@ -35,7 +35,12 @@ async function playUrl(msg, url, voice) {
       const replyString = `playing '${ytInfo.title}' for ${ytMs / 1000}s`;
       reply = await msg.reply(replyString);
       logger.info(replyString);
-      setTimeout(() => stop(voice), ytMs);
+      logger.debug(`ytMs '${ytMs}'`);
+      // TODO if was manually stop remove timeout
+      setTimeout(() => {
+        logger.debug(`stoping '${ytInfo.title}' - music is end`);
+        stop(voice);
+      }, ytMs);
     } else {
       const replyString = `playing '${ytInfo.title}' for unlimited`;
       reply = await msg.reply(replyString);

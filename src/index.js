@@ -18,11 +18,6 @@ client.on("ready", () => {
   logger.info(`Logged in as ${client.user.tag}!`);
 
   startCronDotaMatches(client);
-
-  //   console.log(client.guilds.cache.array());
-  //   client.guilds.cache.array().forEach(async guild => {
-  //     console.log(guild.members.cache.array().map(user => user.user.username));
-  //   });
 });
 
 client.on("message", async (msg) => {

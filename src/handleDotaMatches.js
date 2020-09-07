@@ -19,7 +19,7 @@ async function startCronDotaMatches(client) {
         if (parsedMatches) {
             const mainJokerickChannelID = '415933883888959510';
             const channels = client.channels.cache.filter((obj) => obj.type === 'text' && obj.id === mainJokerickChannelID);
-            const ONE_HOUR = 60 * 60 * 1000; // 2 days
+            const ONE_HOUR = 60 * 60 * 1000;
             const now = new Date();
 
             parsedMatches.forEach((match) => {        

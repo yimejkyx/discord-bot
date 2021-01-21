@@ -116,7 +116,7 @@ async function handleAuctionRequest(client, msg) {
         const reply = await msg.channel.send(`Fetching profit recipes`);
 
         const tables = await fetchAllRecipes();
-        await msg.channel.send(`\`\`\`\n${tables.prices}\`\`\``);
+        await msg.reply(`\`\`\`\n${tables.prices}\`\`\``);
 
         await reply?.delete();
         await msg.delete();

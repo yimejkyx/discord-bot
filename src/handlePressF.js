@@ -1,5 +1,3 @@
-const { logger } = require("./logger");
-const { cmdPrefix } = require("../config.json");
 const fs = require("fs").promises;
 
 async function readCounter() {

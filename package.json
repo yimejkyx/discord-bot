@@ -12,13 +12,16 @@
   "license": "ISC",
   "dependencies": {
     "@discordjs/opus": "^0.1.0",
+    "@gumlet/gif-resize": "^1.1.1",
     "axios": "^0.21.1",
     "cheerio": "^1.0.0-rc.3",
     "cron": "^1.8.2",
     "discord.js": "^12.1.1",
+    "ffmpeg-static": "^4.2.7",
     "pornsearch": "^2.4.3",
+    "sharp": "^0.27.0",
     "winston": "^3.2.1",
-    "ytdl-core": "^2.1.7"
+    "ytdl-core": "^4.4.4"
   },
   "devDependencies": {
     "nodemon": "^2.0.2"

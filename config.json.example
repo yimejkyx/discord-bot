@@ -1,4 +1,6 @@
 {
   "token": "INSERT-TOKEN",
-  "cmdPrefix": "y"
+  "cmdPrefix": "y",
+  "canDeleteMessages": ["The Dons", "Detective"],
+  "canMuteRetard": ["Detective"]
 }

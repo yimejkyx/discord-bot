@@ -1,5 +1,6 @@
 const { logger } = require("./logger");
-const { cmdPrefix } = require("../config.json");
+const config = require("../config.json");
+const { cmdPrefix } = config;
 
 let isDeleting = false;
 
@@ -8,7 +9,7 @@ async function handleDeletingLastMessages(client, msg) {
 
   if (member) {
     const roles = member.roles.cache.map(({ name }) => name);
-    const hasRole = roles.includes("Bc.") || roles.includes("Council");
+    const hasRole = config.canDeleteMessages.some(role => roles.includes(role));
     const isCommand =
       content.startsWith(`${cmdPrefix}ocista`) ||
       content.startsWith(`${cmdPrefix}klin`) ||
@@ -37,15 +38,17 @@ async function handleDeletingLastMessages(client, msg) {
           const { messages } = channel;
           const deleteMessages = await messages.fetch({ limit: count + 1 }); // will delete trigger message
 
-          reply = await msg.reply(
-            `mazu vam tie hovna, konkretne '${deleteMessages.size - 1}' shits`
-          );
+          reply = await msg.reply(`mazu vam tie hovna, konkretne '${deleteMessages.size - 1}' shits`);
           await Promise.all(deleteMessages.map(m => m.delete()));
-          reply.delete();
           logger.info("deleting messages done");
+          await reply?.delete();
         } catch (err) {
           logger.error(`got error deleting messages, ${err}`);
-          reply = await msg.reply("Sry, nieco sa doondialo pri mazani");
+          const errorReply = await msg.reply("Sry, nieco sa doondialo pri mazani");
+
+          setTimeout(() => {
+            errorReply?.delete();
+          }, 5000);
         }
       }
 

@@ -1,5 +1,6 @@
 let isRetardMuted = false;
 let retardId = "340912921569918986";
+const config = require("../config.json");
 
 async function handleRetardMuting(client, msg) {
   const { member } = msg;
@@ -21,10 +22,9 @@ async function handleRetardMuting(client, msg) {
     }
 
     // Pitvor, ID 340912921569918986
-    const retardVoiceState = voiceStates.cache.find(
-      ({ id }) => id === retardId
-    );
-    if (roles.includes("Bc.") && content === "prosim vypni toho retarda") {
+    const retardVoiceState = voiceStates.cache.find(({ id }) => id === retardId);
+    const hasRole = config.canMuteRetard.some(role => roles.includes(role));
+    if (hasRole && content === "prosim vypni toho retarda") {
       if (retardVoiceState) {
         retardVoiceState.setMute(true);
         retardVoiceState.setDeaf(true);
@@ -42,7 +42,7 @@ async function handleRetardMuting(client, msg) {
         reply.delete();
         msg.delete();
       }, 5000);
-    } else if (roles.includes("Bc.") && content === "uvolni tromiksa") {
+    } else if (hasRole && content === "uvolni tromiksa") {
       if (retardVoiceState) {
         retardVoiceState.setMute(false);
         retardVoiceState.setDeaf(false);

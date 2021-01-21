@@ -3,12 +3,12 @@ const Discord = require("discord.js");
 
 const { logger } = require("./src/logger");
 const { handleRetardMuting } = require("./src/handleRetardMuting");
-const { handleYoutubeRequest } = require("./src/handleYoutubeRequest");
+const { handleYoutubeRequest } = require("./src/youtube/handleYoutubeRequest");
 const { handlePornRequest } = require("./src/handlePornRequest");
 const {
   handleDeletingLastMessages,
 } = require("./src/handleDeletingLastMessages.js");
-const { handleDotaMatches, startCronDotaMatches } = require('./src/handleDotaMatches');
+// const { handleDotaMatches, startCronDotaMatches } = require('./src/handleDotaMatches');
 const { handlePressF } = require("./src/handlePressF");
 
 
@@ -19,7 +19,7 @@ function main() {
     logger.info("Connected");
     logger.info(`Logged in as ${client.user.tag}!`);
   
-    startCronDotaMatches(client);
+    // startCronDotaMatches(client);
   });
   
   client.on("message", async (msg) => {
@@ -28,7 +28,7 @@ function main() {
   
     if (member) {
       const { username } = member.user;
-      logger.info(`message got member '${username}}'`);
+      logger.info(`message got member '${username}'`);
     }
   
     if (content === `${cmdPrefix}help`) {
@@ -45,7 +45,7 @@ function main() {
     handlePornRequest(client, msg);
     handleDeletingLastMessages(client, msg);
     handlePressF(client, msg);
-    handleDotaMatches(client, msg);
+    // handleDotaMatches(client, msg);
   });
   
   client.login(token);  

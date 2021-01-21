@@ -29,7 +29,7 @@ async function getItemValue(input) {
     await page.keyboard.press('Enter');
 
     const tableSelector = 'div.search-result-target table tbody';
-    await page.waitForSelector(`${tableSelector} tr td.price`);
+    await page.waitForSelector(`${tableSelector} tr td.price`, { timeout: 10 * 1000 });
     const table = await page.$(tableSelector);
 
     const data = await table.evaluate((ele) => {
@@ -77,6 +77,12 @@ async function launchBrowser() {
                 'chromium-browser',
             args
         });
+
+        const page = await browser.newPage();
+        await page.goto('https://check.torproject.org/');
+        const isUsingTor = await page.$eval('body', el => el.innerHTML.includes('Congratulations. This browser is configured to use Tor'));
+        await page.close();
+        logger.info(`Tor status ${isUsingTor}`);
     } catch (err) { }
 }
 

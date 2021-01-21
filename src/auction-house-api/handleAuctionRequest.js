@@ -113,15 +113,17 @@ async function handleAuctionRequest(client, msg) {
     if (!member) return;
     if (content === `${cmdPrefix}auction profit`) {
         logger.info("handling auction request");
+        const reply = await msg.channel.send(`Fetching profit recipes`);
 
         const tables = await fetchAllRecipes();
         await msg.channel.send(`\`\`\`\n${tables.prices}\`\`\``);
+
+        await reply?.delete();
         await msg.delete();
         return;
     };
 
     if (content.startsWith(`${cmdPrefix}auction `)) {
-        
         const split = content.replace(/\s\s+/g, " ").split(" ");
         if (split.length < 2) return;
         const [, ...stringRequest] = split;

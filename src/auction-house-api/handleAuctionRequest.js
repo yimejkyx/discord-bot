@@ -29,25 +29,37 @@ async function getItemValue(input) {
     await page.keyboard.press('Enter');
 
     const tableSelector = 'div.search-result-target table tbody';
-    await page.waitForSelector(`${tableSelector} tr td.price`, { timeout: 10 * 1000 });
-    const table = await page.$(tableSelector);
 
-    const data = await table.evaluate((ele) => {
-        const rows = Array.from(ele.querySelectorAll('tr'));
-        return rows.map((tr) => {
-            const name = tr.querySelector('td.name span').textContent;
-            const gold = tr.querySelector('td.price span span.gold').textContent.split(',').join('');
-            const silver = tr.querySelector('td.price span span.silver').textContent.split(',').join('');
-            const price = Number.parseInt(gold) + Number.parseInt(silver) / 100;
+    const pricePromise = page.waitForSelector(`${tableSelector} tr td.price`, { timeout: 10 * 1000 }).then(() => true);
+    const noResultPromise = page.waitForSelector(`${tableSelector} tr.message`, { timeout: 10 * 1000 }).then(() => false);
+    const found = await Promise.race([pricePromise, noResultPromise]);
 
-            return {
-                name,
-                price
-            };
+    if (found) {   
+        const table = await page.$(tableSelector);
+        const data = await table.evaluate((ele) => {
+            const rows = Array.from(ele.querySelectorAll('tr'));
+            return rows.map((tr) => {
+                const name = tr.querySelector('td.name span').textContent;
+
+                let gold = 0;
+                try {
+                    gold = tr.querySelector('td.price span span.gold').textContent.split(',').join('');
+                } catch (error) {}
+                const silver = tr.querySelector('td.price span span.silver').textContent.split(',').join('');
+                const price = Number.parseInt(gold) + Number.parseInt(silver) / 100;
+
+                return {
+                    name,
+                    price
+                };
+            });
         });
-    });
+        await page.close();
+        return data.map(obj => ({ ...obj, inputName: input }));
+    }
 
-    return data.map(obj => ({ ...obj, inputName: input }));
+    await page.close();
+    return [];
 }
 
 async function getPrices(items) {
@@ -162,21 +174,24 @@ async function handleAuctionRequest(client, msg) {
             await launchBrowser();
             const output = await getItemValue(requestQuery);
 
-            await msg.reply(`Matches for '${requestQuery}':`);
-            let page = 1;
-            await output.slice(0, 50).reduce(async (acc, item, index) => {
-                const parsedAcc = await acc;
-
-                if ((index + 1) % 25 === 0 || (index + 1) === output.length) {
-                    const tableString = stringTable.create([...parsedAcc, item].map(item => ({ name: item.name, price: item.price })));
-                    await msg.channel.send(`\`\`\`Page ${page} for '${requestQuery}':\n${tableString}\`\`\``);
-                    page++;
-                    return [];
-                }
-
-                return [...parsedAcc, item];
-            }, new Promise(res => res([])))
-
+            if (output.length <= 0) {
+                await msg.reply(`No Matches for '${requestQuery}'`);
+            } else {
+                await msg.reply(`Matches for '${requestQuery}':`);
+                let page = 1;
+                await output.slice(0, 50).reduce(async (acc, item, index) => {
+                    const parsedAcc = await acc;
+    
+                    if ((index + 1) % 25 === 0 || (index + 1) === output.length) {
+                        const tableString = stringTable.create([...parsedAcc, item].map(item => ({ name: item.name, price: item.price })));
+                        await msg.channel.send(`\`\`\`Page ${page} for '${requestQuery}':\n${tableString}\`\`\``);
+                        page++;
+                        return [];
+                    }
+    
+                    return [...parsedAcc, item];
+                }, new Promise(res => res([])))
+            }
             await browser.close();
 
             await reply?.delete();

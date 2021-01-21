@@ -2,6 +2,7 @@ const puppeteer = require('puppeteer');
 const stringTable = require("string-table");
 const { logger } = require("../logger");
 const { recipes } = require("./recipes");
+const mapLimit = require('async/mapLimit');
 
 const config = require("../../config.json");
 const { cmdPrefix } = config;
@@ -50,23 +51,32 @@ async function getItemValue(input) {
 }
 
 async function getPrices(items) {
-    const data = items.map(name =>
-        new Promise(async res => {
-            const output = await getItemValue(name);
-            res(output[0]);
-        })
-    );
+    const data = await mapLimit(
+        items,
+        5,
+        name =>
+            new Promise(async res => {
+                const output = await getItemValue(name);
+                res(output[0]);
+            })
+    )
 
-    return await Promise.all(data);
+    return data;
 }
 
 async function launchBrowser() {
     try {
-        browser = await puppeteer.launch({ headless: true });
+        browser = await puppeteer.launch({ headless: false });
     } catch (err) { }
 
     try {
-        browser = await puppeteer.launch({ headless: true, executablePath: 'chromium-browser' });
+        const args = ['--proxy-server=socks5://127.0.0.1:9050'];
+        browser = await puppeteer.launch({
+            headless: true,
+            executablePath:
+                'chromium-browser',
+            args
+        });
     } catch (err) { }
 }
 
@@ -120,7 +130,7 @@ async function handleAuctionRequest(client, msg) {
     const { content, member } = msg;
 
     if (!member) return;
-    if (content === `${cmdPrefix}auction profit`) {
+    if (content === `${cmdPrefix}ah profit`) {
         logger.info("handling auction request");
         const reply = await msg.channel.send(`Fetching profit recipes`);
 
@@ -133,7 +143,7 @@ async function handleAuctionRequest(client, msg) {
         return;
     };
 
-    if (content.startsWith(`${cmdPrefix}auction `)) {
+    if (content.startsWith(`${cmdPrefix}ah `)) {
         const split = content.replace(/\s\s+/g, " ").split(" ");
         if (split.length < 2) return;
         const [, ...stringRequest] = split;
@@ -152,11 +162,11 @@ async function handleAuctionRequest(client, msg) {
                 const parsedAcc = await acc;
 
                 if ((index + 1) % 25 === 0 || (index + 1) === output.length) {
-                    const tableString = stringTable.create(parsedAcc.map(item => ({ name: item.name, price: item.price })));
+                    const tableString = stringTable.create([...parsedAcc, item].map(item => ({ name: item.name, price: item.price })));
                     await msg.channel.send(`\`\`\`Page ${page} for '${requestQuery}':\n${tableString}\`\`\``);
                     page++;
-                    return [item];
-                } 
+                    return [];
+                }
 
                 return [...parsedAcc, item];
             }, new Promise(res => res([])))
@@ -166,11 +176,9 @@ async function handleAuctionRequest(client, msg) {
             await reply?.delete();
             await msg.delete();
         } catch (err) {
-            logger.info("error", err);
+            logger.info("error in auction handling", err);
             const reply = await msg.channel.send("Nieco sa doondialo :(((");
-            setTimeout(() => {
-                reply?.delete();
-            }, 5000);
+            setTimeout(() => reply?.delete(), 5000);
         }
 
         return;

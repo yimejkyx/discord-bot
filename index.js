@@ -50,6 +50,8 @@ function main() {
       handleAuctionRequest(client, msg);
     } catch (e) {
       console.error('Catching handle error', e);
+      const reply = await msg.channel.send("Nieco sa doondialo :(((");
+      setTimeout(() => reply?.delete(), 5000);
     }
 
     // handleDotaMatches(client, msg);

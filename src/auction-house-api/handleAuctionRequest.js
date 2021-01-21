@@ -79,7 +79,6 @@ async function getPrices(items) {
         }
     )
 
-    console.log('DEBUG data', data);
     return data;
 }
 

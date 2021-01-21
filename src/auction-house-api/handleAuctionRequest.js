@@ -60,8 +60,12 @@ async function getPrices(items) {
     return await Promise.all(data);
 }
 
+async function launchBrowser() {
+    browser = await puppeteer.launch({ headless: true, executablePath: 'chromium-browser' });
+}
+
 async function fetchAllRecipes() {
-    browser = await puppeteer.launch({ headless: true });
+    await launchBrowser();
 
     const items = [...new Set(
         recipes.reduce((arr, recipe) => ([
@@ -106,14 +110,12 @@ async function handleAuctionRequest(client, msg) {
 
         const tables = await fetchAllRecipes();
         await msg.channel.send(`\`\`\`\n${tables.prices}\`\`\``);
-
-        setTimeout(() => {
-            msg.delete();
-        }, 5000);
+        await msg.delete();
         return;
     };
 
     if (content.startsWith(`${cmdPrefix}auction `)) {
+        await msg.delete();
         const split = content.replace(/\s\s+/g, " ").split(" ");
         if (split.length < 2) return;
         const [, ...stringRequest] = split;
@@ -121,15 +123,12 @@ async function handleAuctionRequest(client, msg) {
 
         logger.info(`handling auction request query ${requestQuery}`);
 
-        browser = await puppeteer.launch({ headless: true });
+        await launchBrowser();
         const output = await getItemValue(requestQuery);
         const tableString = stringTable.create(output.map(item => ({ name: item.name, price: item.price })));
         await msg.channel.send(`\`\`\`Matches for '${requestQuery}':\n${tableString}\`\`\``);
         await browser.close();
-
-        setTimeout(() => {
-            msg.delete();
-        }, 5000);
+        
         return;
     };
 }

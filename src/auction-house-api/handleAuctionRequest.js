@@ -121,20 +121,24 @@ async function handleAuctionRequest(client, msg) {
     };
 
     if (content.startsWith(`${cmdPrefix}auction `)) {
-        await msg.delete();
+        
         const split = content.replace(/\s\s+/g, " ").split(" ");
         if (split.length < 2) return;
         const [, ...stringRequest] = split;
         const requestQuery = stringRequest.join(' ');
 
+        const reply = await msg.channel.send(`Fetching auction for '${requestQuery}'`);
         logger.info(`handling auction request query ${requestQuery}`);
 
         await launchBrowser();
         const output = await getItemValue(requestQuery);
+
         const tableString = stringTable.create(output.map(item => ({ name: item.name, price: item.price })));
-        await msg.channel.send(`\`\`\`Matches for '${requestQuery}':\n${tableString}\`\`\``);
+        await msg.reply(`\`\`\`Matches for '${requestQuery}':\n${tableString}\`\`\``);
         await browser.close();
-        
+
+        await reply?.delete();
+        await msg.delete();
         return;
     };
 }

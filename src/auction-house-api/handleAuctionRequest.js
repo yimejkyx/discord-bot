@@ -39,13 +39,20 @@ async function getItemValue(input) {
         const data = await table.evaluate((ele) => {
             const rows = Array.from(ele.querySelectorAll('tr'));
             return rows.map((tr) => {
-                const name = tr.querySelector('td.name span').textContent;
+                let name = 'Unknown';
+                try {
+                    name = tr.querySelector('td.name span').textContent;
+                } catch (error) {}
 
                 let gold = 0;
                 try {
                     gold = tr.querySelector('td.price span span.gold').textContent.split(',').join('');
                 } catch (error) {}
-                const silver = tr.querySelector('td.price span span.silver').textContent.split(',').join('');
+
+                let silver = 0;
+                try {
+                    silver = tr.querySelector('td.price span span.silver').textContent.split(',').join('');
+                } catch (error) {}
                 const price = Number.parseInt(gold) + Number.parseInt(silver) / 100;
 
                 return {

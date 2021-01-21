@@ -35,8 +35,8 @@ async function getItemValue(input) {
         const rows = Array.from(ele.querySelectorAll('tr'));
         return rows.map((tr) => {
             const name = tr.querySelector('td.name span').textContent;
-            const gold = tr.querySelector('td.price span span.gold').textContent;
-            const silver = tr.querySelector('td.price span span.silver').textContent;
+            const gold = tr.querySelector('td.price span span.gold').textContent.split(',').join('');
+            const silver = tr.querySelector('td.price span span.silver').textContent.split(',').join('');
             const price = Number.parseInt(gold) + Number.parseInt(silver) / 100;
 
             return {
@@ -63,11 +63,11 @@ async function getPrices(items) {
 async function launchBrowser() {
     try {
         browser = await puppeteer.launch({ headless: true });
-    } catch (err) {}
+    } catch (err) { }
 
     try {
         browser = await puppeteer.launch({ headless: true, executablePath: 'chromium-browser' });
-    } catch (err) {}
+    } catch (err) { }
 }
 
 async function fetchAllRecipes() {
@@ -101,9 +101,18 @@ async function fetchAllRecipes() {
     console.table(recipesProfit);
     await browser.close();
 
+    const formater = {
+        typeFormatters: {
+            number: function (value, header) { return value.toFixed(2); }
+        }
+    };
+
     return {
-        prices: stringTable.create(prices.map(item => ({ name: item.name, price: item.price }))),
-        recipes: stringTable.create(recipesProfit),
+        prices: stringTable.create(
+            prices.map(item => ({ name: item.name, price: item.price })),
+            formater
+        ),
+        recipes: stringTable.create(recipesProfit, formater),
     };
 }
 
@@ -133,14 +142,14 @@ async function handleAuctionRequest(client, msg) {
         try {
             const reply = await msg.channel.send(`Fetching auction for '${requestQuery}'`);
             logger.info(`handling auction request query ${requestQuery}`);
-    
+
             await launchBrowser();
             const output = await getItemValue(requestQuery);
-    
-            const tableString = stringTable.create(output.map(item => ({ name: item.name, price: item.price })));
+
+            const tableString = stringTable.create(output.slice(0, 7).map(item => ({ name: item.name, price: item.price })));
             await msg.reply(`\`\`\`Matches for '${requestQuery}':\n${tableString}\`\`\``);
             await browser.close();
-    
+
             await reply?.delete();
             await msg.delete();
         } catch (err) {

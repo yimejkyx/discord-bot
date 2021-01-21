@@ -14,7 +14,8 @@ async function handleDeletingLastMessages(client, msg) {
       content.startsWith(`${cmdPrefix}ocista`) ||
       content.startsWith(`${cmdPrefix}klin`) ||
       content.startsWith(`${cmdPrefix}kleen`) ||
-      content.startsWith(`${cmdPrefix}clean`);
+      content.startsWith(`${cmdPrefix}clean`) ||
+      content.startsWith(`${cmdPrefix}clear`);
 
     if (!isDeleting && hasRole && isCommand) {
       const split = content.replace(/\s\s+/g, " ").split(" ");

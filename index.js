@@ -41,12 +41,17 @@ function main() {
     }
   
     // handlers
-    handleRetardMuting(client, msg);
-    handleYoutubeRequest(client, msg);
-    handlePornRequest(client, msg);
-    handleDeletingLastMessages(client, msg);
-    handlePressF(client, msg);
-    handleAuctionRequest(client, msg);
+    try {  
+      handleRetardMuting(client, msg);
+      handleYoutubeRequest(client, msg);
+      handlePornRequest(client, msg);
+      handleDeletingLastMessages(client, msg);
+      handlePressF(client, msg);
+      handleAuctionRequest(client, msg);
+    } catch (e) {
+      console.error('Catching handle error', e);
+    }
+
     // handleDotaMatches(client, msg);
   });
   

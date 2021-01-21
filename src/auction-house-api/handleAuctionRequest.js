@@ -146,8 +146,21 @@ async function handleAuctionRequest(client, msg) {
             await launchBrowser();
             const output = await getItemValue(requestQuery);
 
-            const tableString = stringTable.create(output.slice(0, 7).map(item => ({ name: item.name, price: item.price })));
-            await msg.reply(`\`\`\`Matches for '${requestQuery}':\n${tableString}\`\`\``);
+            await msg.reply(`Matches for '${requestQuery}':`);
+            let page = 1;
+            await output.slice(0, 50).reduce(async (acc, item, index) => {
+                const parsedAcc = await acc;
+
+                if ((index + 1) % 25 === 0 || (index + 1) === output.length) {
+                    const tableString = stringTable.create(parsedAcc.map(item => ({ name: item.name, price: item.price })));
+                    await msg.channel.send(`\`\`\`Page ${page} for '${requestQuery}':\n${tableString}\`\`\``);
+                    page++;
+                    return [item];
+                } 
+
+                return [...parsedAcc, item];
+            }, new Promise(res => res([])))
+
             await browser.close();
 
             await reply?.delete();
@@ -159,7 +172,6 @@ async function handleAuctionRequest(client, msg) {
                 reply?.delete();
             }, 5000);
         }
-
 
         return;
     };

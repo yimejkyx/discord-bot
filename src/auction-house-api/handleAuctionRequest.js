@@ -102,7 +102,7 @@ async function fetchAllRecipes() {
     await browser.close();
 
     return {
-        prices: stringTable.create(prices),
+        prices: stringTable.create(prices.map(item => ({ name: item.name, price: item.price }))),
         recipes: stringTable.create(recipesProfit),
     };
 }
@@ -117,6 +117,7 @@ async function handleAuctionRequest(client, msg) {
 
         const tables = await fetchAllRecipes();
         await msg.reply(`\`\`\`\n${tables.prices}\`\`\``);
+        await msg.reply(`\`\`\`\n${tables.recipes}\`\`\``);
 
         await reply?.delete();
         await msg.delete();

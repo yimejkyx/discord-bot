@@ -61,7 +61,13 @@ async function getPrices(items) {
 }
 
 async function launchBrowser() {
-    browser = await puppeteer.launch({ headless: true, executablePath: 'chromium-browser' });
+    try {
+        browser = await puppeteer.launch({ headless: true });
+    } catch (err) {}
+
+    try {
+        browser = await puppeteer.launch({ headless: true, executablePath: 'chromium-browser' });
+    } catch (err) {}
 }
 
 async function fetchAllRecipes() {

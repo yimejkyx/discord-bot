@@ -73,13 +73,13 @@ async function getPrices(items) {
     const data = await mapLimit(
         items,
         5,
-        name =>
-            new Promise(async res => {
-                const output = await getItemValue(name);
-                res(output[0]);
-            })
+        async name => {
+            const output = await getItemValue(name);
+            return output[0];
+        }
     )
 
+    console.log('DEBUG data', data);
     return data;
 }
 

@@ -62,8 +62,6 @@ async function getItemValue(input) {
             });
         });
 
-        logger.debug("data", data);
-
         await page.close();
         return data.map(obj => ({ ...obj, inputName: input }));
     }

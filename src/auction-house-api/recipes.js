@@ -39,6 +39,19 @@ const recipes = [
                 count: 3
             }
         ]
+    },
+    {
+        name: 'Heavy Desolate Armor Kit',
+        ingredients: [
+            {
+                name: 'Heavy Desolate Leather',
+                count: 8
+            },
+            {
+                name: 'Penumbra Thread',
+                count: 4
+            }
+        ]
     }
 ];
 

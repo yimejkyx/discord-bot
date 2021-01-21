@@ -1,6 +1,6 @@
 const ytdl = require("ytdl-core");
 const { logger } = require("./logger");
-const { cmdPrefix } = require("./config.json");
+const { cmdPrefix } = require("../config.json");
 
 let connection = null;
 

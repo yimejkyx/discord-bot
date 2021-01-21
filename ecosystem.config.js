@@ -1,6 +1,6 @@
 module.exports = {
   apps : [{
-    script: 'src/index.js',
+    script: 'index.js',
     watch: '.'
   }],
 };

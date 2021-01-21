@@ -1,7 +1,7 @@
 const { logger } = require("./logger");
 const { MessageEmbed } = require("discord.js");
 const Pornsearch = require("pornsearch");
-const { cmdPrefix } = require("./config.json");
+const { cmdPrefix } = require("../config.json");
 
 function getRandomInt(min, max) {
   min = Math.ceil(min);

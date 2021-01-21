@@ -130,18 +130,28 @@ async function handleAuctionRequest(client, msg) {
         const [, ...stringRequest] = split;
         const requestQuery = stringRequest.join(' ');
 
-        const reply = await msg.channel.send(`Fetching auction for '${requestQuery}'`);
-        logger.info(`handling auction request query ${requestQuery}`);
+        try {
+            const reply = await msg.channel.send(`Fetching auction for '${requestQuery}'`);
+            logger.info(`handling auction request query ${requestQuery}`);
+    
+            await launchBrowser();
+            const output = await getItemValue(requestQuery);
+    
+            const tableString = stringTable.create(output.map(item => ({ name: item.name, price: item.price })));
+            await msg.reply(`\`\`\`Matches for '${requestQuery}':\n${tableString}\`\`\``);
+            await browser.close();
+    
+            await reply?.delete();
+            await msg.delete();
+        } catch (err) {
+            logger.info("error", err);
+            const reply = await msg.channel.send("Nieco sa doondialo :(((");
+            setTimeout(() => {
+                reply?.delete();
+            }, 5000);
+        }
 
-        await launchBrowser();
-        const output = await getItemValue(requestQuery);
 
-        const tableString = stringTable.create(output.map(item => ({ name: item.name, price: item.price })));
-        await msg.reply(`\`\`\`Matches for '${requestQuery}':\n${tableString}\`\`\``);
-        await browser.close();
-
-        await reply?.delete();
-        await msg.delete();
         return;
     };
 }

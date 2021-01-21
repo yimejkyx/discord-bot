@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "start:prod": "npx pm2 start index.js",
     "start": "node index.js",
     "dev": "nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -18,6 +19,7 @@
     "cron": "^1.8.2",
     "discord.js": "^12.1.1",
     "ffmpeg-static": "^4.2.7",
+    "pm2": "^4.5.1",
     "pornsearch": "^2.4.3",
     "puppeteer": "^5.5.0",
     "sharp": "^0.27.0",

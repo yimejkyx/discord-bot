@@ -10,6 +10,7 @@ const {
 } = require("./src/handleDeletingLastMessages.js");
 // const { handleDotaMatches, startCronDotaMatches } = require('./src/handleDotaMatches');
 const { handlePressF } = require("./src/handlePressF");
+const { handleAuctionRequest } = require("./src/auction-house-api/handleAuctionRequest");
 
 
 function main() {
@@ -45,6 +46,7 @@ function main() {
     handlePornRequest(client, msg);
     handleDeletingLastMessages(client, msg);
     handlePressF(client, msg);
+    handleAuctionRequest(client, msg);
     // handleDotaMatches(client, msg);
   });
   

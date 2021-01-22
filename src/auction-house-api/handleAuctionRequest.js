@@ -143,15 +143,14 @@ async function fetchAllRecipes(recipes, updateFn = () => {}) {
             const ingKey = Object.keys(pricesObj).find(name => name.toLowerCase().includes(ing.name.toLowerCase()));
             return price + ing.count * pricesObj[ingKey];
         }, 0)
-        const profit = sellPrice - craftPrice;
         const percents = (sellPrice / craftPrice - 1) * 100;
 
         return {
             name: item.name,
-            profit: `${(profit * 0.95).toFixed(2)} (${profit.toFixed(2)})`,
-            percents: `${(percents - 5).toFixed(2)}% (${percents?.toFixed(2)}%)`,
+            profit: `${(sellPrice*0.95 - craftPrice).toFixed(2)} (${(sellPrice - craftPrice).toFixed(2)})`,
+            percents: `${(percents-5).toFixed(2)}% (${percents?.toFixed(2)}%)`,
             craftPrice,
-            sellPrice: `${(sellPrice * 0.95).toFixed(2)} (${sellPrice?.toFixed(2)})`,
+            sellPrice: `${(sellPrice*0.95).toFixed(2)} (${sellPrice?.toFixed(2)})`,
         };
     });
 

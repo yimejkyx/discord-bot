@@ -1,5 +1,60 @@
 
-const recipes = [
+const enchRecipes = [
+    {
+        name: 'Lightless Force',
+        ingredients: [
+            {
+                name: 'Eternal Crystal',
+                count: 2
+            },
+            {
+                name: 'Sacred Shard',
+                count: 3
+            }
+        ]
+    },
+    {
+        name: 'Ascended Vigor',
+        ingredients: [
+            {
+                name: 'Eternal Crystal',
+                count: 2
+            },
+            {
+                name: 'Sacred Shard',
+                count: 3
+            }
+        ]
+    },
+    {
+        name: 'Eternal Grace',
+        ingredients: [
+            {
+                name: 'Eternal Crystal',
+                count: 2
+            },
+            {
+                name: 'Sacred Shard',
+                count: 3
+            }
+        ]
+    },
+    {
+        name: 'Sinful Revelation',
+        ingredients: [
+            {
+                name: 'Eternal Crystal',
+                count: 2
+            },
+            {
+                name: 'Sacred Shard',
+                count: 3
+            }
+        ]
+    }
+];
+
+const alchRecipes = [
     {
         name: 'Potion of Spectral Strength',
         ingredients: [
@@ -40,6 +95,9 @@ const recipes = [
             }
         ]
     },
+];
+
+const leatRecipes = [
     {
         name: 'Heavy Desolate Armor Kit',
         ingredients: [
@@ -52,7 +110,10 @@ const recipes = [
                 count: 4
             }
         ]
-    }
+    },
+];
+
+const recipes = [
     // {
     //     name: 'Spectral Flask of Power',
     //     ingredients: [
@@ -77,5 +138,7 @@ const recipes = [
 ];
 
 module.exports = {
-    recipes
+    enchRecipes,
+    alchRecipes,
+    leatRecipes,
 };

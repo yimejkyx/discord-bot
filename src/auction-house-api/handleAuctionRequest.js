@@ -1,7 +1,11 @@
 const puppeteer = require('puppeteer');
 const stringTable = require("string-table");
 const { logger } = require("../logger");
-const { recipes } = require("./recipes");
+const {
+    enchRecipes,
+    alchRecipes,
+    leatRecipes,
+} = require("./recipes");
 const mapLimit = require('async/mapLimit');
 
 const config = require("../../config.json");
@@ -38,7 +42,7 @@ async function getItemValue(input, browser) {
     const noResultPromise = page.waitForSelector(`${tableSelector} tr.message`, { timeout: 10 * 1000 }).then(() => false);
     const found = await Promise.race([pricePromise, noResultPromise]);
 
-    if (found) {   
+    if (found) {
         const table = await page.$(tableSelector);
         const data = await table.evaluate((ele) => {
             const rows = Array.from(ele.querySelectorAll('tr'));
@@ -46,17 +50,17 @@ async function getItemValue(input, browser) {
                 let name = 'Unknown';
                 try {
                     name = tr.querySelector('td.name span').textContent;
-                } catch (error) {}
+                } catch (error) { }
 
                 let gold = 0;
                 try {
                     gold = tr.querySelector('td.price span span.gold').textContent.split(',').join('');
-                } catch (error) {}
+                } catch (error) { }
 
                 let silver = 0;
                 try {
                     silver = tr.querySelector('td.price span span.silver').textContent.split(',').join('');
-                } catch (error) {}
+                } catch (error) { }
                 const price = Number.parseInt(gold) + Number.parseInt(silver) / 100;
 
                 return {
@@ -74,13 +78,14 @@ async function getItemValue(input, browser) {
     return [];
 }
 
-async function getPrices(items, browser) {
+async function getPrices(items, browser, updateFn = () => {}) {
     const data = await mapLimit(
         items,
         5,
         async name => {
-            const output = await getItemValue(name, browser);
-            return output[0];
+            const results = await getItemValue(name, browser);
+            await updateFn(name, results);
+            return results[0];
         }
     )
 
@@ -112,32 +117,41 @@ async function launchBrowser() {
     return browser;
 }
 
-async function fetchAllRecipes() {
-    const browser = await launchBrowser();
-
-    const items = [...new Set(
+function getItemsFromRecipes(recipes) {
+    return [...new Set(
         recipes.reduce((arr, recipe) => ([
             ...arr,
             recipe.name,
             ...recipe.ingredients.map(item => item.name)
         ]), [])
     )];
+}
+
+async function fetchAllRecipes(recipes, updateFn = () => {}) {
+    const browser = await launchBrowser();
+
+    const items = getItemsFromRecipes(recipes);
     logger.debug(`getting prices: ${items}`);
-    const prices = await getPrices(items, browser);
+    const prices = await getPrices(items, browser, updateFn);
 
     const pricesObj = prices.reduce((obj, item) => ({ ...obj, [item.name]: item.price }), {});
     const recipesProfit = recipes.map((item) => {
-        const itemPrice = pricesObj[item.name];
-        const craftPrice = item.ingredients.reduce((price, ing) => price + ing.count * pricesObj[ing.name], 0)
-        const profit = itemPrice - craftPrice;
-        const percents = (itemPrice / craftPrice - 1) * 100;
+        const key = Object.keys(pricesObj).find(name => name.toLowerCase().includes(item.name.toLowerCase()));
+        const sellPrice = pricesObj[key];
+
+        const craftPrice = item.ingredients.reduce((price, ing) => {
+            const ingKey = Object.keys(pricesObj).find(name => name.toLowerCase().includes(ing.name.toLowerCase()));
+            return price + ing.count * pricesObj[ingKey];
+        }, 0)
+        const profit = sellPrice - craftPrice;
+        const percents = (sellPrice / craftPrice - 1) * 100;
 
         return {
             name: item.name,
             profit: Number.parseFloat(profit.toFixed(2)),
-            percents: `${percents.toFixed(2)}%`,
+            percents: `${(percents - 5).toFixed(2)}% (${percents?.toFixed(2)}%)`,
             craftPrice,
-            itemPrice,
+            sellPrice: `${(sellPrice * 0.95).toFixed(2)} (${sellPrice?.toFixed(2)})`,
         };
     });
 
@@ -189,11 +203,41 @@ async function handleAuctionRequest(client, msg) {
     const { content, member } = msg;
 
     if (!member) return;
-    if (content === `${cmdPrefix}ah profit`) {
-        logger.info("handling auction request");
-        const reply = await msg.channel.send(`Fetching profit recipes`);
+    if (content.startsWith(`${cmdPrefix}ah p `)) {
+        const split = content.replace(/\s\s+/g, " ").split(" ");
+        if (split.length < 3) return;
 
-        const tables = await fetchAllRecipes();
+        const [, , typeRecipes] = split;
+        let recipes;
+        switch (typeRecipes) {
+            case 'ench': {
+                recipes = enchRecipes;
+                break;
+            }
+            case 'alch': {
+                recipes = alchRecipes;
+                break;
+            }
+            case 'leat': {
+                recipes = leatRecipes;
+                break;
+            }
+            default: {
+                recipes = [...enchRecipes, ...alchRecipes, ...leatRecipes];
+            }
+        }
+
+
+        logger.info("handling auction request");
+        const items = getItemsFromRecipes(recipes);
+        const reply = await msg.channel.send(`Fetching profit '${typeRecipes}' recipes: 0/${items.length}`);
+
+        let itemsDone = 0;
+        const updateFn = async () => {
+            itemsDone += 1;
+            await reply.edit(`Fetching profit '${typeRecipes}' recipes: ${itemsDone}/${items.length}`)
+        }
+        const tables = await fetchAllRecipes(recipes, updateFn);
         await msg.reply(`\`\`\`\n${tables.prices}\`\`\``);
         await msg.reply(`\`\`\`\n${tables.recipes}\`\`\``);
 

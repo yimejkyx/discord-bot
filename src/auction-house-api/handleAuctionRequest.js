@@ -7,17 +7,21 @@ const mapLimit = require('async/mapLimit');
 const config = require("../../config.json");
 const { cmdPrefix } = config;
 
-let browser = null;
+const formater = {
+    typeFormatters: {
+        number: function (value, header) { return value.toFixed(2); }
+    }
+};
 
-async function openOribosPage() {
+async function openOribosPage(browser) {
     const page = await browser.newPage();
     await page.goto('https://oribos.exchange', { waitUntil: 'networkidle2' });
     await page.select('div.search-bar select', '549');
     return page;
 }
 
-async function getItemValue(input) {
-    const page = await openOribosPage();
+async function getItemValue(input, browser) {
+    const page = await openOribosPage(browser);
     logger.debug(`paged opened done: ${input}`);
 
     try {
@@ -70,12 +74,12 @@ async function getItemValue(input) {
     return [];
 }
 
-async function getPrices(items) {
+async function getPrices(items, browser) {
     const data = await mapLimit(
         items,
         5,
         async name => {
-            const output = await getItemValue(name);
+            const output = await getItemValue(name, browser);
             return output[0];
         }
     )
@@ -84,6 +88,7 @@ async function getPrices(items) {
 }
 
 async function launchBrowser() {
+    let browser = null;
     try {
         browser = await puppeteer.launch({ headless: false });
     } catch (err) { }
@@ -103,10 +108,12 @@ async function launchBrowser() {
         await page.close();
         logger.info(`Tor status ${isUsingTor}`);
     } catch (err) { }
+
+    return browser;
 }
 
 async function fetchAllRecipes() {
-    await launchBrowser();
+    const browser = await launchBrowser();
 
     const items = [...new Set(
         recipes.reduce((arr, recipe) => ([
@@ -116,17 +123,21 @@ async function fetchAllRecipes() {
         ]), [])
     )];
     logger.debug(`getting prices: ${items}`);
-    const prices = await getPrices(items);
+    const prices = await getPrices(items, browser);
 
     const pricesObj = prices.reduce((obj, item) => ({ ...obj, [item.name]: item.price }), {});
     const recipesProfit = recipes.map((item) => {
         const itemPrice = pricesObj[item.name];
         const craftPrice = item.ingredients.reduce((price, ing) => price + ing.count * pricesObj[ing.name], 0)
         const profit = itemPrice - craftPrice;
+        const percents = (itemPrice / craftPrice - 1) * 100;
 
         return {
             name: item.name,
-            profit: Number.parseFloat(profit.toFixed(2))
+            profit: Number.parseFloat(profit.toFixed(2)),
+            percents: `${percents.toFixed(2)}%`,
+            craftPrice,
+            itemPrice,
         };
     });
 
@@ -136,12 +147,6 @@ async function fetchAllRecipes() {
     console.table(recipesProfit);
     await browser.close();
 
-    const formater = {
-        typeFormatters: {
-            number: function (value, header) { return value.toFixed(2); }
-        }
-    };
-
     return {
         prices: stringTable.create(
             prices.map(item => ({ name: item.name, price: item.price })),
@@ -150,6 +155,35 @@ async function fetchAllRecipes() {
         recipes: stringTable.create(recipesProfit, formater),
     };
 }
+
+async function requestItem(requestQuery, msg) {
+    const browser = await launchBrowser();
+    const output = await getItemValue(requestQuery, browser);
+
+    if (output.length <= 0) {
+        await msg.reply(`No Matches for '${requestQuery}'`);
+    } else {
+        await msg.reply(`Matches for '${requestQuery}':`);
+        let pagination = 1;
+        await output.slice(0, 50).reduce(async (acc, item, index) => {
+            const parsedAcc = await acc;
+
+            if ((index + 1) % 25 === 0 || (index + 1) === output.length) {
+                const tableString = stringTable.create(
+                    [...parsedAcc, item].map(item => ({ name: item.name, price: item.price })),
+                    formater
+                );
+                await msg.channel.send(`\`\`\`Page ${pagination} for '${requestQuery}':\n${tableString}\`\`\``);
+                pagination++;
+                return [];
+            }
+
+            return [...parsedAcc, item];
+        }, new Promise(res => res([])))
+    }
+    await browser.close();
+}
+
 
 async function handleAuctionRequest(client, msg) {
     const { content, member } = msg;
@@ -177,29 +211,7 @@ async function handleAuctionRequest(client, msg) {
         try {
             const reply = await msg.channel.send(`Fetching auction for '${requestQuery}'`);
             logger.info(`handling auction request query ${requestQuery}`);
-
-            await launchBrowser();
-            const output = await getItemValue(requestQuery);
-
-            if (output.length <= 0) {
-                await msg.reply(`No Matches for '${requestQuery}'`);
-            } else {
-                await msg.reply(`Matches for '${requestQuery}':`);
-                let page = 1;
-                await output.slice(0, 50).reduce(async (acc, item, index) => {
-                    const parsedAcc = await acc;
-    
-                    if ((index + 1) % 25 === 0 || (index + 1) === output.length) {
-                        const tableString = stringTable.create([...parsedAcc, item].map(item => ({ name: item.name, price: item.price })));
-                        await msg.channel.send(`\`\`\`Page ${page} for '${requestQuery}':\n${tableString}\`\`\``);
-                        page++;
-                        return [];
-                    }
-    
-                    return [...parsedAcc, item];
-                }, new Promise(res => res([])))
-            }
-            await browser.close();
+            await requestItem(requestQuery, msg);
 
             await reply?.delete();
             await msg.delete();

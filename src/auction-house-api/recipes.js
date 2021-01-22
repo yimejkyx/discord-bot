@@ -53,6 +53,27 @@ const recipes = [
             }
         ]
     }
+    // {
+    //     name: 'Spectral Flask of Power',
+    //     ingredients: [
+    //         {
+    //             name: 'Nightshade',
+    //             count: 3
+    //         },
+    //         {
+    //             name: 'Rising Glory',
+    //             count: 4
+    //         },
+    //         {
+    //             name: 'Marrowroot',
+    //             count: 4
+    //         },
+    //         {
+    //             name: 'Widowbloom',
+    //             count: 4
+    //         }
+    //     ]
+    // }
 ];
 
 module.exports = {

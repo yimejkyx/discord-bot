@@ -148,7 +148,7 @@ async function fetchAllRecipes(recipes, updateFn = () => {}) {
 
         return {
             name: item.name,
-            profit: Number.parseFloat(profit.toFixed(2)),
+            profit: `${(profit * 0.95).toFixed(2)} (${profit.toFixed(2)})`,
             percents: `${(percents - 5).toFixed(2)}% (${percents?.toFixed(2)}%)`,
             craftPrice,
             sellPrice: `${(sellPrice * 0.95).toFixed(2)} (${sellPrice?.toFixed(2)})`,

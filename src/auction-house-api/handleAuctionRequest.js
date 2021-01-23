@@ -125,8 +125,8 @@ async function launchBrowser() {
 }
 
 function getItemsFromRecipes(recipes) {
-    return [...new Set(
-        recipes.reduce((arr, recipe) => ([
+    const items = recipes
+        .reduce((arr, recipe) => ([
             ...arr,
             {
                 name: recipe.name,
@@ -136,8 +136,8 @@ function getItemsFromRecipes(recipes) {
                 name: ing.name,
                 isExact: !!ing.isExact,
             }))
-        ]), [])
-    )];
+        ]), []);
+    return items.filter((v, i, a) => a.findIndex(t => (t.name === v.name)) === i);
 }
 
 async function fetchAllRecipes(recipes, updateFn = () => { }) {

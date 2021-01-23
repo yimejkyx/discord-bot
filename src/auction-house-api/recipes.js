@@ -56,6 +56,15 @@ const enchRecipes = [
 
 const alchRecipes = [
     {
+        name: 'Spiritual Anti-Venom',
+        ingredients: [
+            {
+                name: 'Death Blossom',
+                count: 2
+            }
+        ]
+    },
+    {
         name: 'Potion of Spectral Strength',
         ingredients: [
             {

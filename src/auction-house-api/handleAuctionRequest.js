@@ -41,10 +41,11 @@ async function getItemValue(input, browser) {
     let found = false;
     try {
         const pricePromise = page.waitForSelector(`${tableSelector} tr td.price`, { timeout: 0 }).then(() => true);
-        const noResultPromise = page.waitForSelector(`${tableSelector} tr.message`, { timeout: 10 * 1000 }).then(() => false);
+        const noResultPromise = page.waitForSelector(`${tableSelector} tr.message`, { timeout: 30 * 1000 }).then(() => false);
         found = await Promise.race([pricePromise, noResultPromise]);
     } catch (err) {
         console.log('DEBUG EROR', err);
+        throw err;
     }
 
     if (found) {
@@ -145,7 +146,14 @@ async function fetchAllRecipes(recipes, updateFn = () => { }) {
 
     const items = getItemsFromRecipes(recipes);
     logger.debug(`getting prices: ${items}`);
-    const prices = await getPrices(items, browser, updateFn);
+
+    let prices = [];
+    try {
+        prices = await getPrices(items, browser, updateFn);
+    } catch (error) {
+        await browser.close();
+        throw error;
+    }
 
     const pricesObj = prices.reduce((obj, item) => ({ ...obj, [item.name]: item.price }), {});
     const recipesProfit = recipes.map((item) => {
@@ -251,7 +259,15 @@ async function handleAuctionRequest(client, msg) {
             itemsDone += 1;
             await reply.edit(`Fetching profit '${typeRecipes}' recipes: ${itemsDone}/${items.length}`)
         }
-        const tables = await fetchAllRecipes(recipes, updateFn);
+
+        let tables = [];
+        try {
+            tables = await fetchAllRecipes(recipes, updateFn);
+        } catch (error) {
+            await reply.delete();
+            return;
+        }
+
         await msg.reply(`\`\`\`\n${tables.prices}\`\`\``);
         await msg.reply(`\`\`\`\n${tables.recipes}\`\`\``);
 

@@ -138,19 +138,21 @@ async function fetchAllRecipes(recipes, updateFn = () => {}) {
     const recipesProfit = recipes.map((item) => {
         const key = Object.keys(pricesObj).find(name => name.toLowerCase().includes(item.name.toLowerCase()));
         const sellPrice = pricesObj[key];
+        const sellPrice95 = sellPrice * 0.95;
 
         const craftPrice = item.ingredients.reduce((price, ing) => {
             const ingKey = Object.keys(pricesObj).find(name => name.toLowerCase().includes(ing.name.toLowerCase()));
             return price + ing.count * pricesObj[ingKey];
         }, 0)
+        const percents95 = (sellPrice95 / craftPrice - 1) * 100
         const percents = (sellPrice / craftPrice - 1) * 100;
 
         return {
             name: item.name,
-            profit: `${(sellPrice*0.95 - craftPrice).toFixed(2)} (${(sellPrice - craftPrice).toFixed(2)})`,
-            percents: `${(percents-5).toFixed(2)}% (${percents?.toFixed(2)}%)`,
+            profit: `${(sellPrice95 - craftPrice).toFixed(2)} (${(sellPrice - craftPrice).toFixed(2)})`,
+            percents: `${percents95.toFixed(2)}% (${percents.toFixed(2)}%)`,
             craftPrice,
-            sellPrice: `${(sellPrice*0.95).toFixed(2)} (${sellPrice?.toFixed(2)})`,
+            sellPrice: `${sellPrice95.toFixed(2)} (${sellPrice.toFixed(2)})`,
         };
     });
 

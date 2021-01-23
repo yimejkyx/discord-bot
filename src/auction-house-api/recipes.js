@@ -92,6 +92,47 @@ const alchRecipes = [
         ]
     },
     {
+        name: 'Potion of Deathly Fixation',
+        ingredients: [
+            {
+                name: 'Widowbloom',
+                count: 3
+            },
+            {
+                name: "Vigil's Torch",
+                isExact: true,
+                count: 3
+            }
+        ]
+    },
+    {
+        name: 'Potion of Empowered Exorcisms',
+        ingredients: [
+            {
+                name: 'Widowbloom',
+                count: 3
+            },
+            {
+                name: "Marrowroot",
+                count: 3
+            }
+        ]
+    },
+    {
+        name: 'Potion of Divine Awakening',
+        ingredients: [
+            {
+                name: 'Rising Glory',
+                count: 3
+            },
+            {
+                name: "Vigil's Torch",
+                isExact: true,
+                count: 3
+            }
+        ]
+    },
+    {
         name: 'Potion of Phantom Fire',
         ingredients: [
             {
@@ -100,6 +141,56 @@ const alchRecipes = [
             },
             {
                 name: 'Rising Glory',
+                count: 3
+            }
+        ]
+    },
+    {
+        name: 'Potion of Spiritual Clarity',
+        ingredients: [
+            {
+                name: "Vigil's Torch",
+                isExact: true,
+                count: 5
+            }
+        ]
+    },
+    {
+        name: 'Spectral Flask of Power',
+        ingredients: [
+            {
+                name: 'Nightshade',
+                isExact: true,
+                count: 3
+            },
+            {
+                name: 'Rising Glory',
+                count: 4
+            },
+            {
+                name: 'Marrowroot',
+                count: 4
+            },
+            {
+                name: 'Widowbloom',
+                count: 4
+            }
+        ]
+    },
+    {
+        name: 'Spectral Flask of Stamina',
+        ingredients: [
+            {
+                name: 'Nightshade',
+                isExact: true,
+                count: 1
+            },
+            {
+                name: 'Rising Glory',
+                count: 3
+            },
+            {
+                name: 'Marrowroot',
                 count: 3
             }
         ]

@@ -38,9 +38,14 @@ async function getItemValue(input, browser) {
 
     const tableSelector = 'div.search-result-target table tbody';
 
-    const pricePromise = page.waitForSelector(`${tableSelector} tr td.price`, { timeout: 10 * 1000 }).then(() => true);
-    const noResultPromise = page.waitForSelector(`${tableSelector} tr.message`, { timeout: 10 * 1000 }).then(() => false);
-    const found = await Promise.race([pricePromise, noResultPromise]);
+    let found = false;
+    try {
+        const pricePromise = page.waitForSelector(`${tableSelector} tr td.price`, { timeout: 0 }).then(() => true);
+        const noResultPromise = page.waitForSelector(`${tableSelector} tr.message`, { timeout: 10 * 1000 }).then(() => false);
+        found = await Promise.race([pricePromise, noResultPromise]);
+    } catch (err) {
+        console.log('DEBUG EROR', err);
+    }
 
     if (found) {
         const table = await page.$(tableSelector);
@@ -78,13 +83,15 @@ async function getItemValue(input, browser) {
     return [];
 }
 
-async function getPrices(items, browser, updateFn = () => {}) {
+async function getPrices(items, browser, updateFn = () => { }) {
     const data = await mapLimit(
         items,
         5,
-        async name => {
-            const results = await getItemValue(name, browser);
-            await updateFn(name, results);
+        async (item) => {
+            const results = await getItemValue(item.name, browser);
+            await updateFn(item.name, results);
+
+            if (item.isExact) return results.find((result) => result.name.toLowerCase() === item.name.toLowerCase());
             return results[0];
         }
     )
@@ -121,13 +128,19 @@ function getItemsFromRecipes(recipes) {
     return [...new Set(
         recipes.reduce((arr, recipe) => ([
             ...arr,
-            recipe.name,
-            ...recipe.ingredients.map(item => item.name)
+            {
+                name: recipe.name,
+                isExact: !!recipe.isExact,
+            },
+            ...recipe.ingredients.map(ing => ({
+                name: ing.name,
+                isExact: !!ing.isExact,
+            }))
         ]), [])
     )];
 }
 
-async function fetchAllRecipes(recipes, updateFn = () => {}) {
+async function fetchAllRecipes(recipes, updateFn = () => { }) {
     const browser = await launchBrowser();
 
     const items = getItemsFromRecipes(recipes);

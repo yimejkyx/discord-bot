@@ -174,6 +174,11 @@ const alchRecipes = [
             {
                 name: 'Widowbloom',
                 count: 4
+            },
+            {
+                name: "Vigil's Torch",
+                isExact: true,
+                count: 4
             }
         ]
     },

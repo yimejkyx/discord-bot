@@ -31,7 +31,7 @@ function main() {
   const client = new Discord.Client();
   const initChannelName = 'little-italy';
 
-  client.on("ready", () => {
+  client.on("ready", async () => {
     logger.info("Connected");
     logger.info(`Logged in as ${client.user.tag}!`);
     const reply = await client.channels.cache.find(channel => channel.name === initChannelName).send("YimyPi is back bitches :))");

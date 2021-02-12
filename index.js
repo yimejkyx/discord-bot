@@ -18,7 +18,7 @@ async function handleExit(client, msg) {
 
   if (content === `${cmdPrefix}exit`) {
     const reply = await msg.channel.send("Idem si to hodit :((");
-    setTimeout(() => {
+    setTimeout(async () => {
       await reply?.delete();
       await msg?.delete();
       process.exit(1);

@@ -7,8 +7,12 @@ RUN apk add --no-cache \
     automake \
     bash \
     g++ \
+    libc6-compat \
+    libjpeg-turbo-dev \
+    libpng-dev \
     make \
-    nasm
+    nasm \
+    libvips-dev
 
 WORKDIR /app
 

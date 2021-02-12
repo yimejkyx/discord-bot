@@ -34,7 +34,11 @@ function main() {
   client.on("ready", () => {
     logger.info("Connected");
     logger.info(`Logged in as ${client.user.tag}!`);
-    client.channels.cache.find(channel => channel.name === initChannelName).send("YimyPi is back bitches :))");
+    const reply = await client.channels.cache.find(channel => channel.name === initChannelName).send("YimyPi is back bitches :))");
+    setTimeout(async () => {
+      await reply?.delete();
+    }, 5000);
+
     // startCronDotaMatches(client);
   });
   

@@ -1,5 +1,9 @@
 FROM node:alpine
 
+RUN apk add vips vips-dev fftw-dev --update-cache \
+    --repository http://dl-3.alpinelinux.org/alpine/edge/community \
+    --repository http://dl-3.alpinelinux.org/alpine/edge/main
+
 RUN apk add --no-cache \
     python \
     python3 \
@@ -12,11 +16,6 @@ RUN apk add --no-cache \
     libpng-dev \
     make \
     nasm
-
-RUN apk add --update --no-cache \
-    --repository http://dl-3.alpinelinux.org/alpine/edge/community \
-    --repository http://dl-3.alpinelinux.org/alpine/edge/main \
-    vips-dev
 
 WORKDIR /app
 

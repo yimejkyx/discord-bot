@@ -16,7 +16,12 @@ const { handleAuctionRequest } = require("./src/auction-house-api/handleAuctionR
 async function handleExit(client, msg) {
   const { content } = msg;
 
-  if (content == `${cmdPrefix}exit`) {
+  if (content === `${cmdPrefix}exit`) {
+    const reply = await msg.channel.send("Idem si to hodit :((");
+    setTimeout(() => {
+      reply?.delete();
+      msg?.delete();
+    }, 5000);
     process.exit(1);
   }
 }
@@ -24,11 +29,12 @@ async function handleExit(client, msg) {
 
 function main() {
   const client = new Discord.Client();
+  const initChannelName = 'little-italy';
 
   client.on("ready", () => {
     logger.info("Connected");
     logger.info(`Logged in as ${client.user.tag}!`);
-  
+    client.channels.cache.find(channel => channel.name === initChannelName).send("YimyPi is back bitches :))");
     // startCronDotaMatches(client);
   });
   

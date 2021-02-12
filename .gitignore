@@ -2,3 +2,4 @@ node_modules
 .vscode
 pressCounter.json
 config.json
+combined.log

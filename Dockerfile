@@ -11,8 +11,7 @@ RUN apk add --no-cache \
     libjpeg-turbo-dev \
     libpng-dev \
     make \
-    nasm \
-    libvips-dev
+    nasm
 
 WORKDIR /app
 

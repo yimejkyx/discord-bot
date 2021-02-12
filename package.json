@@ -23,7 +23,8 @@
     "pm2": "^4.5.1",
     "pornsearch": "^2.4.3",
     "puppeteer": "^5.5.0",
-    "sharp": "^0.27.0",
+    "minipass": "2.7.0",
+    "sharp": "^0.23.0",
     "string-table": "^0.1.5",
     "winston": "^3.2.1",
     "ytdl-core": "^4.4.4"

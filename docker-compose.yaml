@@ -1,0 +1,9 @@
+version: "3.8"
+services:
+  discord-bot:
+    restart: "always"
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    volumes:
+      - /var/log/combined.log:./combined.log

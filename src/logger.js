@@ -11,7 +11,8 @@ module.exports = {
       new winston.transports.Console({
         format: winston.format.combine(winston.format.colorize(), logFormat),
         level: 'debug'
-      })
+      }),
+      new winston.transports.File({ filename: 'combined.log' }),
     ]
   })
 };

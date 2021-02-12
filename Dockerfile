@@ -13,6 +13,11 @@ RUN apk add --no-cache \
     make \
     nasm
 
+RUN apk add --update --no-cache \
+    --repository http://dl-3.alpinelinux.org/alpine/edge/community \
+    --repository http://dl-3.alpinelinux.org/alpine/edge/main \
+    vips-dev
+
 WORKDIR /app
 
 COPY package*.json ./

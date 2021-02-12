@@ -13,6 +13,15 @@ const { handlePressF } = require("./src/handlePressF");
 const { handleAuctionRequest } = require("./src/auction-house-api/handleAuctionRequest");
 
 
+async function handleExit(client, msg) {
+  const { content } = msg;
+
+  if (content == `${cmdPrefix}exit`) {
+    process.exit(1);
+  }
+}
+
+
 function main() {
   const client = new Discord.Client();
 
@@ -48,6 +57,7 @@ function main() {
       handleDeletingLastMessages(client, msg);
       handlePressF(client, msg);
       handleAuctionRequest(client, msg);
+      handleExit(client, msg);
     } catch (e) {
       console.error('Catching handle error', e);
       const reply = await msg.channel.send("Nieco sa doondialo :(((");

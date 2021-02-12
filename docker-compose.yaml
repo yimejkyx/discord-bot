@@ -6,4 +6,5 @@ services:
       context: .
       dockerfile: ./Dockerfile
     volumes:
+      - ./config.json:/app/config.json
       - /var/log/discordbot.log:/app/combined.log

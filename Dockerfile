@@ -1,6 +1,10 @@
 FROM node:alpine
 
-RUN apk add vips vips-dev fftw-dev --update-cache \
+RUN apk add --update-cache --repository http://dl-3.alpinelinux.org/alpine/edge/testing \
+  vips-dev fftw-dev gcc g++ make libc6-compat
+
+RUN apk add --no-cache \
+    vips vips-dev fftw-dev \
     --repository http://dl-3.alpinelinux.org/alpine/edge/community \
     --repository http://dl-3.alpinelinux.org/alpine/edge/main
 

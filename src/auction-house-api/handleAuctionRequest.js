@@ -114,7 +114,7 @@ async function launchBrowser() {
         logger.info(`Launching puppeteer with TOR`);
 
         try {
-            const args = ['--proxy-server=socks5://127.0.0.1:9050'];
+            const args = ['--no-sandbox', '--disable-setuid-sandbox', '--proxy-server=socks5://127.0.0.1:9050'];
             browser = await puppeteer.launch({
                 headless: true,
                 executablePath:

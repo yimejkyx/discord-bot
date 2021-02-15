@@ -103,24 +103,35 @@ async function getPrices(items, browser, updateFn = () => { }) {
 async function launchBrowser() {
     let browser = null;
     try {
+        logger.info(`Launching puppeteer`);
         browser = await puppeteer.launch({ headless: false });
-    } catch (err) { }
+    } catch (err) {
+        browser = null;
+        logger.error(`Launching puppeteer error: ${err}`);
+     }
 
-    try {
-        const args = ['--proxy-server=socks5://127.0.0.1:9050'];
-        browser = await puppeteer.launch({
-            headless: true,
-            executablePath:
-                'chromium-browser',
-            args
-        });
+    if (!browser) {
+        logger.info(`Launching puppeteer with TOR`);
 
-        const page = await browser.newPage();
-        await page.goto('https://check.torproject.org/');
-        const isUsingTor = await page.$eval('body', el => el.innerHTML.includes('Congratulations. This browser is configured to use Tor'));
-        await page.close();
-        logger.info(`Tor status ${isUsingTor}`);
-    } catch (err) { }
+        try {
+            const args = ['--proxy-server=socks5://127.0.0.1:9050'];
+            browser = await puppeteer.launch({
+                headless: true,
+                executablePath:
+                    'chromium-browser',
+                args
+            });
+    
+            const page = await browser.newPage();
+            await page.goto('https://check.torproject.org/');
+            const isUsingTor = await page.$eval('body', el => el.innerHTML.includes('Congratulations. This browser is configured to use Tor'));
+            await page.close();
+            logger.info(`Tor status ${isUsingTor}`);
+        } catch (err) { 
+            browser = null;
+            logger.error(`Launching browser error: ${err}`);
+        }
+    }
 
     return browser;
 }
@@ -143,6 +154,10 @@ function getItemsFromRecipes(recipes) {
 
 async function fetchAllRecipes(recipes, updateFn = () => { }) {
     const browser = await launchBrowser();
+    if (!browser) {
+        logger.error(`Missing browser :(`);
+        throw new Error("Missing browser");
+    }
 
     const items = getItemsFromRecipes(recipes);
     logger.debug(`getting prices: ${items}`);

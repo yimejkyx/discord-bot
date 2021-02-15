@@ -12,7 +12,9 @@ RUN apk add --update --no-cache \
   g++ \
   libjpeg-turbo-dev \
   libpng-dev \
-  nasm
+  nasm \
+  tor \
+  chromium
 
 WORKDIR /app
 

@@ -3,9 +3,8 @@ const { logger } = require("../logger");
 
 async function prepareSong(url) {
     logger.debug('getting video info');
-    const ytInfo = await ytdl.getInfo(await ytdl.getURLVideoID(url));
-    const title = ytInfo.videoDetails.title;
-    const videoLength = Number.parseFloat(ytInfo.length_seconds);
+    const { videoDetails: { title, lengthSeconds } } = await ytdl.getInfo(await ytdl.getURLVideoID(url));
+    const videoLength = Number.parseFloat(lengthSeconds);
     const videoLengthMs = (videoLength + 1) * 1000;
   
     logger.debug('getting video audio only');

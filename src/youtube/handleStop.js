@@ -15,7 +15,7 @@ async function handleStop(client, msg, youtubeState) {
     }
     youtubeState.lock = true;
 
-    const reply = await msg.reply("handleStop: stoping actual video");
+    const reply = await msg.reply("stoping actual video");
     logger.info("handleStop: stop video executed");
     timeoutDelMessages(5000, [reply, msg]);
 

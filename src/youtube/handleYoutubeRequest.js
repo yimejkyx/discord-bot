@@ -4,6 +4,7 @@ const {handlePlay} = require("./handlePlay");
 async function handleYoutubeRequest(client, msg) {
     const {member} = msg;
     const youtubeState = {
+        lock: false,
         connection: null,
         stoppingTimeout: null,
     };

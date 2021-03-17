@@ -5,6 +5,13 @@ const {timeoutDelMessages} = require("../timeoutDelMessages");
 const {cmdPrefix} = config;
 
 async function handlePlay(client, msg, youtubeState) {
+    if (youtubeState.lock) {
+        const reply = await msg.reply("Cannot play song right now :((");
+        await timeoutDelMessages(5000, [reply, msg]);
+        return;
+    }
+    youtubeState.lock = true;
+
     const {content, member: {voice}} = msg;
 
     if (!content.startsWith(`${cmdPrefix}play`)) return;
@@ -33,6 +40,8 @@ async function handlePlay(client, msg, youtubeState) {
             logger.error(`handlePlay: invalid request "${requestText}"`);
         }
     }
+
+    youtubeState.lock = false;
 }
 
 module.exports = {

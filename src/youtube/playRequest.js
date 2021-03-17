@@ -9,10 +9,10 @@ async function afterPlayUrl(msg, voice, youtubeState, title, videoLength, videoL
     if (videoLength > 0) {
         const replyString = `playing '${title}' for ${videoLengthMs / 1000}s`;
         reply = await msg.reply(replyString);
-        logger.debug(replyString, `videoLengthMs '${videoLengthMs}'`);
+        logger.debug(`afterPlayUrl: '${replyString}' videoLengthMs '${videoLengthMs}'`);
 
         youtubeState.stoppingTimeout = setTimeout(() => {
-            logger.debug(`stoping '${title}' - music is end`);
+            logger.debug(`afterPlayUrl: stoping '${title}' - music is end`);
             stop(youtubeState, voice);
             youtubeState.stoppingTimeout = null;
         }, videoLengthMs + 10000);
@@ -38,11 +38,12 @@ async function playRequest(msg, requestText, voice, youtubeState) {
         }
 
         const {song, title, videoLength, videoLengthMs} = songInfo;
+        logger.info(`playRequest: playing song '${title}'`);
         youtubeState.connection.play(song);
         reply = await afterPlayUrl(msg, voice, youtubeState, title, videoLength, videoLengthMs);
     } catch (err) {
         await stop(youtubeState, voice);
-        logger.error(`got error in youtube play request, ${err}`);
+        logger.error(`playRequest: got error in youtube play request, ${err}`);
         reply = await msg.reply("Sry, cannot play that video, nieco sa doondialo :(((((");
     }
 

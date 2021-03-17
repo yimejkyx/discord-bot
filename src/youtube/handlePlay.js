@@ -27,10 +27,10 @@ async function handlePlay(client, msg, youtubeState) {
         const parsedText = requestText.join(" ");
 
         if (parsedText) {
-            logger.info(`playing "${parsedText}"`);
+            logger.info(`handlePlay: playing "${parsedText}"`);
             await playRequest(msg, parsedText, voice, youtubeState);
         } else {
-            logger.error(`invalid request "${requestText}"`);
+            logger.error(`handlePlay: invalid request "${requestText}"`);
         }
     }
 }

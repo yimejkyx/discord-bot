@@ -8,11 +8,12 @@ async function handleStop(client, msg, youtubeState) {
     const {content, member: {voice}} = msg;
     if (content !== `${cmdPrefix}stop`) return;
 
-    const reply = await msg.reply("stoping actual video");
-    logger.info("stop video executed");
+    const reply = await msg.reply("handleStop: stoping actual video");
+    logger.info("handleStop: stop video executed");
     timeoutDelMessages(5000, [reply, msg]);
 
     if (youtubeState.stoppingTimeout) {
+        logger.info("handleStop: clearing timeout in video");
         clearTimeout(youtubeState.stoppingTimeout);
         youtubeState.stoppingTimeout = null;
     }

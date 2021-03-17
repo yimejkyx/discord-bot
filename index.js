@@ -1,5 +1,6 @@
 const { token } = require("./config.json");
 const Discord = require("discord.js");
+const {handleExit} = require("./src/handleExit");
 
 const { logger } = require("./src/logger");
 const { handleRetardMuting } = require("./src/handleRetardMuting");

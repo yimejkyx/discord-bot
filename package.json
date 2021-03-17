@@ -26,6 +26,7 @@
     "puppeteer": "^5.5.0",
     "string-table": "^0.1.5",
     "winston": "^3.2.1",
+    "yt-search": "^2.7.4",
     "ytdl-core": "^4.5.0"
   },
   "devDependencies": {

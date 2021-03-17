@@ -1,4 +1,4 @@
-const { token, cmdPrefix } = require("./config.json");
+const { token } = require("./config.json");
 const Discord = require("discord.js");
 
 const { logger } = require("./src/logger");
@@ -11,20 +11,8 @@ const {
 // const { handleDotaMatches, startCronDotaMatches } = require('./src/handleDotaMatches');
 const { handlePressF } = require("./src/handlePressF");
 const { handleAuctionRequest } = require("./src/auction-house-api/handleAuctionRequest");
-
-
-async function handleExit(client, msg) {
-  const { content } = msg;
-
-  if (content === `${cmdPrefix}exit`) {
-    const reply = await msg.channel.send("Idem si to hodit :((");
-    setTimeout(async () => {
-      await reply?.delete();
-      await msg?.delete();
-      process.exit(1);
-    }, 5000);
-  }
-}
+const { timeoutDelMessages } = require("./src/timeoutDelMessages");
+const { handleHelp } = require("./src/handleHelp");
 
 
 function main() {
@@ -35,32 +23,21 @@ function main() {
     logger.info("Connected");
     logger.info(`Logged in as ${client.user.tag}!`);
     const reply = await client.channels.cache.find(channel => channel.name === initChannelName).send("YimyPi is back bitches :))");
-    setTimeout(async () => {
-      await reply?.delete();
-    }, 5000);
-
-    // startCronDotaMatches(client);
+    timeoutDelMessages(5000, [reply]);
   });
   
   client.on("message", async (msg) => {
-    const { content, member } = msg;
-    logger.info(`recieved message "${msg}", "${msg.channel}"`);
-  
+    const { member } = msg;
     if (member) {
       const { username } = member.user;
-      logger.info(`message got member '${username}'`);
+      logger.debug(`recieved message ${username}:${msg.channel}: ${msg}`);
+    } else {
+      logger.debug(`recieved message anon:${msg.channel}: ${msg}`);
     }
-  
-    if (content === `${cmdPrefix}help`) {
-      const reply = await msg.reply("Tromiks je retard");
-      setTimeout(() => {
-        reply.delete();
-        msg.delete();
-      }, 5000);
-    }
-  
+
     // handlers
-    try {  
+    try { 
+      handleHelp(client, msg);
       handleRetardMuting(client, msg);
       handleYoutubeRequest(client, msg);
       handlePornRequest(client, msg);
@@ -71,10 +48,8 @@ function main() {
     } catch (e) {
       console.error('Catching handle error', e);
       const reply = await msg.channel.send("Nieco sa doondialo :(((");
-      setTimeout(() => reply?.delete(), 5000);
+      timeoutDelMessages(5000, [reply]);
     }
-
-    // handleDotaMatches(client, msg);
   });
   
   client.login(token);  

@@ -1,9 +1,11 @@
-const { stop } = require('./stop');
-const { logger } = require("../logger");
-const { prepareSong } = require('./prepareSong');
+const {timeoutDelMessages} = require("../timeoutDelMessages");
+const {stop} = require('./stop');
+const {logger} = require("../logger");
+const {prepareSong} = require('./prepareSong');
 
-  
+
 async function afterPlayUrl(msg, voice, youtubeState, title, videoLength, videoLengthMs) {
+    let reply;
     if (videoLength > 0) {
         const replyString = `playing '${title}' for ${videoLengthMs / 1000}s`;
         reply = await msg.reply(replyString);
@@ -23,27 +25,30 @@ async function afterPlayUrl(msg, voice, youtubeState, title, videoLength, videoL
     return reply;
 }
 
-async function playUrl(msg, url, voice, youtubeState) {
+async function playRequest(msg, requestText, voice, youtubeState) {
     youtubeState.connection = await voice.channel.join();
 
-    let reply = null;
+    let reply;
     try {
-        const { song, title, videoLength, videoLengthMs } = await prepareSong(url);
+        const songInfo = await prepareSong(requestText);
+        if (!songInfo) {
+            reply = await msg.reply("Sry, cannot find video, nieco sa doondialo :(((((");
+            await timeoutDelMessages(5000, [reply, msg]);
+            return;
+        }
+
+        const {song, title, videoLength, videoLengthMs} = songInfo;
         youtubeState.connection.play(song);
         reply = await afterPlayUrl(msg, voice, youtubeState, title, videoLength, videoLengthMs);
     } catch (err) {
-        stop(youtubeState, voice);
+        await stop(youtubeState, voice);
         logger.error(`got error in youtube play request, ${err}`);
-        reply = await msg.reply("Sry, cant play that video, something went wrong :(((((");
+        reply = await msg.reply("Sry, cannot play that video, nieco sa doondialo :(((((");
+        await timeoutDelMessages(5000, [reply, msg]);
     }
-
-    setTimeout(() => {
-        reply?.delete();
-        msg.delete();
-    }, 5000);
 }
 
 
 module.exports = {
-    playUrl,
+    playRequest,
 };

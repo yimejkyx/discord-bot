@@ -3,3 +3,4 @@ node_modules
 pressCounter.json
 config.json
 combined.log
+.idea

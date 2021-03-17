@@ -20,10 +20,10 @@ function main() {
   const client = new Discord.Client();
   const initChannelName = 'little-italy';
 
-  const youtubeState = {
+  const voiceState = {
     lock: false,
     connection: null,
-    stoppingTimeout: null,
+    stoppingTimeout: null
 };
 
   client.on("ready", async () => {
@@ -47,7 +47,7 @@ function main() {
     try { 
       handleHelp(client, msg);
       handleRetardMuting(client, msg);
-      handleYoutubeRequest(client, msg, youtubeState);
+      handleYoutubeRequest(client, msg, voiceState);
       handlePornRequest(client, msg);
       handleDeletingLastMessages(client, msg);
       handlePressF(client, msg);

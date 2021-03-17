@@ -4,29 +4,28 @@ const config = require("../../config.json");
 const {timeoutDelMessages} = require("../timeoutDelMessages");
 const {cmdPrefix} = config;
 
-async function handlePlay(client, msg, youtubeState) {
+async function handlePlay(client, msg, voiceState) {
     const {content, member: {voice}} = msg;
 
     if (!content.startsWith(`${cmdPrefix}play`)) return;
-    if (youtubeState.lock) {
+    if (voiceState.lock) {
         const reply = await msg.reply("Cannot play song right now :((");
         await timeoutDelMessages(5000, [reply, msg]);
         return;
     }
-    youtubeState.lock = true;
-
+    voiceState.lock = true;
 
     if (!voice.channel) {
         const reply = await msg.reply("You need to join a voice channel first!");
         await timeoutDelMessages(5000, [reply, msg]);
-        youtubeState.lock = false;
+        voiceState.lock = false;
         return;
     }
 
-    if (youtubeState.connection) {
+    if (voiceState.connection) {
         const reply = await msg.reply("Cant play another video!");
         await timeoutDelMessages(5000, [reply, msg]);
-        youtubeState.lock = false;
+        voiceState.lock = false;
         return;
     }
 
@@ -37,13 +36,13 @@ async function handlePlay(client, msg, youtubeState) {
 
         if (parsedText) {
             logger.info(`handlePlay: playing "${parsedText}"`);
-            await playRequest(msg, parsedText, voice, youtubeState);
+            await playRequest(msg, parsedText, voice, voiceState);
         } else {
             logger.error(`handlePlay: invalid request "${requestText}"`);
         }
     }
 
-    youtubeState.lock = false;
+    voiceState.lock = false;
 }
 
 module.exports = {

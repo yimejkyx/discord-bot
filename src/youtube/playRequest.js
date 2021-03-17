@@ -1,23 +1,24 @@
 const {timeoutDelMessages} = require("../timeoutDelMessages");
-const {stop} = require('./stop');
+const {stopVoiceConnection} = require('./stopVoiceConnection');
 const {logger} = require("../logger");
 const {prepareSong} = require('./prepareSong');
 
 
-async function afterPlayUrl(msg, voice, youtubeState, title, videoLength, videoLengthMs) {
+async function setupClearingVoiceConnection(msg, voiceState, songInfo) {
     let reply;
-    if (videoLength > 0) {
-        const replyString = `playing '${title}' for ${videoLengthMs / 1000}s`;
+    if (songInfo.videoLength > 0) {
+        const replyString = `playing '${songInfo.title}' for ${songInfo.videoLengthMs / 1000}s`;
         reply = await msg.reply(replyString);
-        logger.debug(`afterPlayUrl: '${replyString}' videoLengthMs '${videoLengthMs}'`);
+        logger.debug(`afterPlayUrl: '${replyString}' videoLengthMs '${songInfo.videoLengthMs}'`);
 
-        youtubeState.stoppingTimeout = setTimeout(() => {
-            logger.debug(`afterPlayUrl: stoping '${title}' - music is end`);
-            stop(youtubeState, voice);
-            youtubeState.stoppingTimeout = null;
-        }, videoLengthMs + 10000);
+        const clearingFunction = async () => {
+            logger.debug(`afterPlayUrl: stopping voice after playing '${songInfo.title}' - music is end`);
+            voiceState.stoppingTimeout = null;
+            await stopVoiceConnection(voiceState);
+        }
+        voiceState.stoppingTimeout = setTimeout(clearingFunction, songInfo.videoLengthMs + 10000);
     } else {
-        const replyString = `playing '${title}' for unlimited`;
+        const replyString = `playing '${songInfo.title}' for unlimited`;
         reply = await msg.reply(replyString);
         logger.info(replyString);
     }
@@ -25,8 +26,8 @@ async function afterPlayUrl(msg, voice, youtubeState, title, videoLength, videoL
     return reply;
 }
 
-async function playRequest(msg, requestText, voice, youtubeState) {
-    youtubeState.connection = await voice.channel.join();
+async function playRequest(msg, requestText, voice, voiceState) {
+    voiceState.connection = await voice.channel.join();
 
     let reply;
     try {
@@ -37,12 +38,11 @@ async function playRequest(msg, requestText, voice, youtubeState) {
             return;
         }
 
-        const {song, title, videoLength, videoLengthMs} = songInfo;
-        logger.info(`playRequest: playing song '${title}'`);
-        youtubeState.connection.play(song);
-        reply = await afterPlayUrl(msg, voice, youtubeState, title, videoLength, videoLengthMs);
+        logger.info(`playRequest: playing song '${songInfo.title}'`);
+        voiceState.connection.play(songInfo.song);
+        reply = await setupClearingVoiceConnection(msg, voiceState, songInfo);
     } catch (err) {
-        await stop(youtubeState, voice);
+        await stopVoiceConnection(voiceState);
         logger.error(`playRequest: got error in youtube play request, ${err}`);
         reply = await msg.reply("Sry, cannot play that video, nieco sa doondialo :(((((");
     }

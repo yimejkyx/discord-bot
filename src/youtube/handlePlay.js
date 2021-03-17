@@ -23,10 +23,12 @@ async function handlePlay(client, msg, youtubeState) {
 
     const split = content.replace(/\s\s+/g, " ").split(" ");
     if (split.length >= 2) {
-        const [, requestText] = split;
-        if (requestText) {
-            logger.info(`playing "${requestText}"`);
-            await playRequest(msg, requestText, voice, youtubeState);
+        const [, ...requestText] = split;
+        const parsedText = requestText.join(" ");
+
+        if (parsedText) {
+            logger.info(`playing "${parsedText}"`);
+            await playRequest(msg, parsedText, voice, youtubeState);
         } else {
             logger.error(`invalid request "${requestText}"`);
         }

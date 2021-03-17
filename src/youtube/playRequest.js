@@ -44,8 +44,9 @@ async function playRequest(msg, requestText, voice, youtubeState) {
         await stop(youtubeState, voice);
         logger.error(`got error in youtube play request, ${err}`);
         reply = await msg.reply("Sry, cannot play that video, nieco sa doondialo :(((((");
-        await timeoutDelMessages(5000, [reply, msg]);
     }
+
+    await timeoutDelMessages(5000, [reply, msg]);
 }
 
 

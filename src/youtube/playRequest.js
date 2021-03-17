@@ -15,7 +15,7 @@ async function afterPlayUrl(msg, voice, youtubeState, title, videoLength, videoL
             logger.debug(`stoping '${title}' - music is end`);
             stop(youtubeState, voice);
             youtubeState.stoppingTimeout = null;
-        }, videoLengthMs);
+        }, videoLengthMs + 10000);
     } else {
         const replyString = `playing '${title}' for unlimited`;
         reply = await msg.reply(replyString);

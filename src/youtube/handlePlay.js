@@ -5,6 +5,9 @@ const {timeoutDelMessages} = require("../timeoutDelMessages");
 const {cmdPrefix} = config;
 
 async function handlePlay(client, msg, youtubeState) {
+    const {content, member: {voice}} = msg;
+
+    if (!content.startsWith(`${cmdPrefix}play`)) return;
     if (youtubeState.lock) {
         const reply = await msg.reply("Cannot play song right now :((");
         await timeoutDelMessages(5000, [reply, msg]);
@@ -12,9 +15,6 @@ async function handlePlay(client, msg, youtubeState) {
     }
     youtubeState.lock = true;
 
-    const {content, member: {voice}} = msg;
-
-    if (!content.startsWith(`${cmdPrefix}play`)) return;
 
     if (!voice.channel) {
         const reply = await msg.reply("You need to join a voice channel first!");

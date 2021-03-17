@@ -20,6 +20,12 @@ function main() {
   const client = new Discord.Client();
   const initChannelName = 'little-italy';
 
+  const youtubeState = {
+    lock: false,
+    connection: null,
+    stoppingTimeout: null,
+};
+
   client.on("ready", async () => {
     logger.info("Connected");
     logger.info(`Logged in as ${client.user.tag}!`);
@@ -35,12 +41,13 @@ function main() {
     } else {
       logger.debug(`recieved message anon:${msg.channel}: ${msg}`);
     }
+    
 
     // handlers
     try { 
       handleHelp(client, msg);
       handleRetardMuting(client, msg);
-      handleYoutubeRequest(client, msg);
+      handleYoutubeRequest(client, msg, youtubeState);
       handlePornRequest(client, msg);
       handleDeletingLastMessages(client, msg);
       handlePressF(client, msg);

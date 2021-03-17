@@ -1,13 +1,9 @@
 const {handleStop} = require("./handleStop");
 const {handlePlay} = require("./handlePlay");
 
-async function handleYoutubeRequest(client, msg) {
+
+async function handleYoutubeRequest(client, msg, youtubeState) {
     const {member} = msg;
-    const youtubeState = {
-        lock: false,
-        connection: null,
-        stoppingTimeout: null,
-    };
 
     if (member) {
         handleStop(client, msg, youtubeState);

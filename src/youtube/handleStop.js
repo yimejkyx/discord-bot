@@ -6,9 +6,13 @@ const {cmdPrefix} = config;
 
 async function handleStop(client, msg, youtubeState) {
     const {content, member: {voice}} = msg;
-    if (content !== `${cmdPrefix}stop`) return;
 
-    if (youtubeState.lock) return;
+    if (content !== `${cmdPrefix}stop`) return;
+    if (youtubeState.lock) {
+        logger.debug('handleStop: lock stop');
+
+        return;
+    }
     youtubeState.lock = true;
 
     const reply = await msg.reply("handleStop: stoping actual video");

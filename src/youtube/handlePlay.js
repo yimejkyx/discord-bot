@@ -19,12 +19,14 @@ async function handlePlay(client, msg, youtubeState) {
     if (!voice.channel) {
         const reply = await msg.reply("You need to join a voice channel first!");
         await timeoutDelMessages(5000, [reply, msg]);
+        youtubeState.lock = false;
         return;
     }
 
     if (youtubeState.connection) {
         const reply = await msg.reply("Cant play another video!");
         await timeoutDelMessages(5000, [reply, msg]);
+        youtubeState.lock = false;
         return;
     }
 

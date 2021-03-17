@@ -5,6 +5,9 @@ const {timeoutDelMessages} = require("../timeoutDelMessages");
 const {cmdPrefix} = config;
 
 async function handleStop(client, msg, youtubeState) {
+    if (youtubeState.lock) return;
+    youtubeState.lock = true;
+
     const {content, member: {voice}} = msg;
     if (content !== `${cmdPrefix}stop`) return;
 
@@ -18,6 +21,8 @@ async function handleStop(client, msg, youtubeState) {
         youtubeState.stoppingTimeout = null;
     }
     await stop(youtubeState, voice);
+
+    youtubeState.lock = false;
 }
 
 module.exports = {

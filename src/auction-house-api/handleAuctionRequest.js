@@ -289,7 +289,7 @@ async function handleAuctionRequest(client, msg) {
         await reply?.delete();
         await msg.delete();
         return;
-    };
+    }
 
     if (content.startsWith(`${cmdPrefix}ah `)) {
         const split = content.replace(/\s\s+/g, " ").split(" ");
@@ -311,7 +311,7 @@ async function handleAuctionRequest(client, msg) {
         }
 
         return;
-    };
+    }
 }
 
 module.exports = {

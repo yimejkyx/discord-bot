@@ -2,5 +2,7 @@
   "token": "INSERT-TOKEN",
   "cmdPrefix": "y",
   "canDeleteMessages": ["The Dons", "Detective"],
-  "canMuteRetard": ["Detective"]
+  "canMuteRetard": ["Detective"],
+  "mainChannelName": "little-italy",
+  "defiPulseApiKey": "INSERT-DEFI-PULSE-TOKEN"
 }

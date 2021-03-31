@@ -1,6 +1,7 @@
 node_modules
 .vscode
 pressCounter.json
+gasState.json
 config.json
 combined.log
 .idea

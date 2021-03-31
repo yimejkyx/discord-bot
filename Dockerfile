@@ -12,6 +12,16 @@ RUN apk add --update --no-cache \
   g++ \
   libjpeg-turbo-dev \
   libpng-dev \
+  jpeg-dev \
+  cairo-dev \
+  giflib-dev \
+  pango-dev \
+  libtool \
+  cairo-dev \
+  jpeg-dev \
+  musl-dev \
+  pixman-dev \
+  pangomm-dev \
   nasm \
   tor \
   chromium

@@ -21,6 +21,7 @@ async function handleGasPriceCron(client, gasState) {
             {...data, created: new Date()},
             ...gasState.prices.slice(0, 144 - 1), // Hold gas prices for last day
         ];
+        await fs.writeFile("./gasState.json", JSON.stringify(gasState));
 
         gasState.listeners.forEach((listener) => {
             if (average >= listener.limit * 10) return;
@@ -51,6 +52,7 @@ async function handleGasPrice(client, msg, gasState) {
         // removing listener
         logger.info(`Removing user "${member.nickname}" listener`);
         gasState.listeners = gasState.listeners.filter((listener) => listener.userId !== member.id);
+        await fs.writeFile("./gasState.json", JSON.stringify(gasState));
 
         const reply = await msg.reply(`Removing yout gas price watcher`);
         await timeoutDelMessages(5000, [reply, msg]);
@@ -70,12 +72,11 @@ async function handleGasPrice(client, msg, gasState) {
             channelId: msg.channel.id,
             limit
         });
+        await fs.writeFile("./gasState.json", JSON.stringify(gasState));
 
         const reply = await msg.reply(`Watching the gas price with limit ${limit}`);
         await timeoutDelMessages(5000, [reply, msg]);
     }
-
-    await fs.writeFile("./gasState.json", JSON.stringify(gasState));
 }
 
 module.exports = {

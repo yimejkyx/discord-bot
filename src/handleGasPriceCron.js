@@ -1,6 +1,8 @@
 const axios = require("axios");
 const CronJob = require('cron').CronJob;
 const fs = require("fs").promises;
+const vega = require("vega");
+const { MessageAttachment} = require('discord.js');
 
 const {timeoutDelMessages} = require("./timeoutDelMessages");
 const {logger} = require("./logger");
@@ -35,7 +37,7 @@ async function handleGasPriceCron(client, gasState) {
             const channel = guild.channels.cache.find((channel) => channel.id === listener.channelId);
             if (!channel) return;
 
-            channel.send(`<@${user.id}> ETH limit avg < ${listener.limit}: fastest **${fastest/10}** (<30s), fast **${fast/10}** (<2m), average **${average/10}** (<5m), safe low **${safeLow/10}** (<30m)`);
+            channel.send(`<@${user.id}> ETH limit avg < ${listener.limit}: fastest **${fastest / 10}** (<30s), fast **${fast / 10}** (<2m), average **${average / 10}** (<5m), safe low **${safeLow / 10}** (<30m)`);
         });
     }).start();
 }
@@ -79,7 +81,132 @@ async function handleGasPrice(client, msg, gasState) {
     }
 }
 
+function getSpec(values) {
+    return {
+        "$schema": "https://vega.github.io/schema/vega/v5.json",
+        "description": "Chart",
+        "width": 850,
+        "height": 500,
+        "padding": 5,
+        "background": "white",
+        "signals": [
+            {
+                "name": "interpolate",
+                "value": "monotone"
+            }
+        ],
+        "data": [
+            {
+                "name": "table",
+                "values": values
+            }
+        ],
+        "scales": [
+            {
+                "name": "x",
+                "type": "point",
+                "range": "width",
+                "reverse": true,
+                "domain": {"data": "table", "field": "created"}
+            },
+            {
+                "name": "y",
+                "type": "linear",
+                "range": "height",
+                "nice": true,
+                "domain": {"data": "table", "field": "value"}
+            },
+            {
+                "name": "type",
+                "type": "ordinal",
+                "range": "category",
+                "domain": {"data": "table", "field": "type"}
+            }
+        ],
+        "axes": [
+            {"orient": "bottom", "scale": "x", "grid": true},
+            {"orient": "left", "scale": "y", "grid": true}
+        ],
+        "marks": [
+            {
+                "type": "group",
+                "from": {
+                    "facet": {
+                        "name": "series",
+                        "data": "table",
+                        "groupby": "type"
+                    }
+                },
+                "marks": [
+                    {
+                        "type": "line",
+                        "from": {"data": "series"},
+                        "encode": {
+                            "enter": {
+                                "x": {"scale": "x", "field": "created"},
+                                "y": {"scale": "y", "field": "value"},
+                                "stroke": {"scale": "type", "field": "type"},
+                                "strokeWidth": {"value": 3}
+                            },
+                            "update": {
+                                "interpolate": {"signal": "interpolate"},
+                                "strokeOpacity": {"value": 1}
+                            },
+                            "hover": {
+                                "strokeOpacity": {"value": 0.5}
+                            },
+                            "legend": {
+                                "update": {
+                                    "stroke": {"value": "#ccc"},
+                                    "strokeWidth": {"value": 1.5}
+                                }
+                            }
+                        }
+                    }
+                ]
+            }
+        ]
+    };
+
+}
+
+async function handleGasChart(client, msg, gasState) {
+    const {content, member} = msg;
+    if (!member) return;
+
+    const isCommand = content === `${cmdPrefix}gas plot`;
+    if (!isCommand) return;
+
+    const values = gasState.prices.reduce((arr, item) => (
+        [
+            ...arr,
+            ...["safeLow", "average", "fast", "fastest"].map((key) => ({
+                "created": new Date(item.created),
+                "value": item[key] / 10,
+                "type": key,
+            }))
+        ]
+    ), []);
+
+    const spec = getSpec(values);
+    const view = new vega
+        .View(vega.parse(spec))
+        .renderer('none')
+        .initialize();
+
+    try {
+        const canvas = await view.toCanvas();
+        logger.info('Sending PNG to file chart');
+        const attachment = new MessageAttachment(canvas.toBuffer(), 'gas-price.png');
+        await msg.channel.send(attachment);
+    } catch (err) {
+        logger.err("Error writing PNG to file:");
+        console.error(err);
+    }
+}
+
 module.exports = {
     handleGasPriceCron,
-    handleGasPrice
+    handleGasPrice,
+    handleGasChart
 };

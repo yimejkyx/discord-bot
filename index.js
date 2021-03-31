@@ -1,5 +1,6 @@
 const {token, mainChannelName} = require("./config.json");
 const Discord = require("discord.js");
+const {handleGasChart} = require("./src/handleGasPriceCron");
 const fs = require("fs").promises;
 
 const {handleGasPrice} = require("./src/handleGasPriceCron");
@@ -70,6 +71,7 @@ async function main() {
             handleAuctionRequest(client, msg);
             handleGasPrice(client, msg, gasState);
             handleExit(client, msg);
+            handleGasChart(client, msg, gasState);
         } catch (e) {
             console.error('Catching handle error', e);
             const reply = await msg.channel.send("Nieco sa doondialo :(((");

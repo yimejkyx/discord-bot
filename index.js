@@ -1,5 +1,7 @@
 const {token, mainChannelName} = require("./config.json");
 const Discord = require("discord.js");
+const fs = require("fs").promises;
+
 const {handleGasPrice} = require("./src/handleGasPriceCron");
 const {getChannelByName} = require("./src/getChannelByName");
 const {handleGasPriceCron} = require("./src/handleGasPriceCron");
@@ -19,7 +21,7 @@ const {timeoutDelMessages} = require("./src/timeoutDelMessages");
 const {handleHelp} = require("./src/handleHelp");
 
 
-function main() {
+async function main() {
     const client = new Discord.Client();
 
     const voiceState = {
@@ -28,10 +30,16 @@ function main() {
         stoppingTimeout: null
     };
 
-    const gasState = {
-      prices: [],
-      listeners: [],
-    };
+    let gasState = null;
+    try {
+        const file = await fs.readFile("./gasState.json", "utf8");
+        gasState = JSON.parse(file);
+    } catch (err) {
+        gasState = {
+            prices: [],
+            listeners: [],
+        };
+    }
     handleGasPriceCron(client, gasState);
 
 

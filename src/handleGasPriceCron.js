@@ -1,6 +1,8 @@
 const axios = require("axios");
-const {timeoutDelMessages} = require("./timeoutDelMessages");
 const CronJob = require('cron').CronJob;
+const fs = require("fs").promises;
+
+const {timeoutDelMessages} = require("./timeoutDelMessages");
 const {logger} = require("./logger");
 const {defiPulseApiKey, cmdPrefix} = require("../config.json");
 
@@ -32,7 +34,7 @@ async function handleGasPriceCron(client, gasState) {
             const channel = guild.channels.cache.find((channel) => channel.id === listener.channelId);
             if (!channel) return;
 
-            channel.send(`<@${user.id}> limit average < ${listener.limit}: fastest **${fastest/10}** (<30s), fast **${fast/10}** (<2m), average **${average/10}** (<5m), safe low **${safeLow/10}** (<30m)`);
+            channel.send(`<@${user.id}> ETH limit avg < ${listener.limit}: fastest **${fastest/10}** (<30s), fast **${fast/10}** (<2m), average **${average/10}** (<5m), safe low **${safeLow/10}** (<30m)`);
         });
     }).start();
 }
@@ -72,6 +74,8 @@ async function handleGasPrice(client, msg, gasState) {
         const reply = await msg.reply(`Watching the gas price with limit ${limit}`);
         await timeoutDelMessages(5000, [reply, msg]);
     }
+
+    await fs.writeFile("./gasState.json", JSON.stringify(gasState));
 }
 
 module.exports = {

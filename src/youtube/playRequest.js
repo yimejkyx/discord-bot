@@ -31,7 +31,9 @@ async function playRequest(msg, requestText, voice, voiceState) {
 
     let reply;
     try {
+        logger.info(`playRequest: preparing song '${requestText}`);
         const songInfo = await prepareSong(requestText);
+        logger.info(`playRequest: got prepared song '${songInfo.title}'`);
         if (!songInfo) {
             reply = await msg.reply("Sry, cannot find video, nieco sa doondialo :(((((");
             await timeoutDelMessages(5000, [reply, msg]);

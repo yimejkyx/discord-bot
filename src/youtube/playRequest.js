@@ -1,5 +1,5 @@
 const {timeoutDelMessages} = require("../timeoutDelMessages");
-const {stopVoiceConnection} = require('./stopVoiceConnection');
+const {stopVoiceConnection} = require('../stopVoiceConnection');
 const {logger} = require("../logger");
 const {prepareSong} = require('./prepareSong');
 

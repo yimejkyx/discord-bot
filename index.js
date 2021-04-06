@@ -1,5 +1,7 @@
 const {token, mainChannelName} = require("./config.json");
 const Discord = require("discord.js");
+const {handleSomebodyConnect} = require("./src/handleSomebodyConnect");
+
 const {handleGasChart} = require("./src/handleGasPriceCron");
 const fs = require("fs").promises;
 
@@ -43,6 +45,10 @@ async function main() {
     }
     handleGasPriceCron(client, gasState);
 
+
+    client.on(`voiceStateUpdate`, async (oldState, newState) => {
+        handleSomebodyConnect(oldState, newState, voiceState);
+    });
 
     client.on("ready", async () => {
         logger.info("Connected");

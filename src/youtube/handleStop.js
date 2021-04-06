@@ -1,6 +1,6 @@
 const {logger} = require("../logger");
 const config = require("../../config.json");
-const {stopVoiceConnection} = require("./stopVoiceConnection");
+const {stopVoiceConnection} = require("../stopVoiceConnection");
 const {timeoutDelMessages} = require("../timeoutDelMessages");
 const {cmdPrefix} = config;
 

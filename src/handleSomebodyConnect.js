@@ -9,7 +9,8 @@ async function handleSomebodyConnect(oldState, newState, voiceState) {
     const guildName = `The City of Lost Heaven`;
 
     if (!guild || !member) return;
-    if (guild.name !== guildName || !member.nickname.includes(`Tokok`)) return;
+    if (guild.name !== guildName) return;
+    if (!member?.nickname?.includes(`Tokok`)) return;
 
     // user was not connected, now he is
     if (oldState.channelID === null && newState.channelID !== null) {

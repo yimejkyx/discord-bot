@@ -20,8 +20,8 @@ async function prepareSong(requestText) {
         logger.debug(`prepareSong: found url based on text ${url}`);
     }
 
-    logger.debug('prepareSong: getting video info');
-    const { videoDetails: { title, lengthSeconds } } = await ytdl.getInfo(await ytdl.getURLVideoID(url));
+    logger.debug(`prepareSong: getting video info from url ${url}`);
+    const { videoDetails: { title, lengthSeconds } } = await ytdl.getInfo(`${url}`);
     const videoLength = Number.parseFloat(lengthSeconds);
     const videoLengthMs = (videoLength + 1) * 1000;
   

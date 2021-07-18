@@ -1,9 +1,9 @@
-FROM node:alpine
+FROM node:14-alpine
 
 RUN apk add --update --no-cache \
   make \
   build-base \
-  python \
+  python2 \
   python3 \
   autoconf \
   automake \

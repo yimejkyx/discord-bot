@@ -1,5 +1,5 @@
-const {timeoutDelMessages} = require("./timeoutDelMessages");
-const {cmdPrefix} = require("../config.json");
+const {timeoutDelMessages} = require("../helpers/timeoutDelMessages");
+const {cmdPrefix} = require("../../config.json");
 
 async function handleExit(client, msg) {
     const {content} = msg;

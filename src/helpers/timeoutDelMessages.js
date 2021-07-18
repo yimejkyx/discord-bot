@@ -1,8 +1,14 @@
+const { logger } = require("../helpers/logger");
+
 async function deleteMessages(messages) {
-    return Promise.all(
-        messages.map(mes => mes?.delete())
-    ).catch(() => {
-    });
+    if (messages) {
+        return Promise.all(
+            messages.map(mes => mes?.delete())
+        ).catch(() => {
+        });
+    }
+
+    return null;
 }
 
 async function timeoutDelMessages(time, messages) {

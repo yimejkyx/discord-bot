@@ -1,6 +1,6 @@
-const {logger} = require("./logger");
-const config = require("../config.json");
-const {timeoutDelMessages} = require("./timeoutDelMessages");
+const {logger} = require("../helpers/logger");
+const config = require("../../config.json");
+const {timeoutDelMessages} = require("../helpers/timeoutDelMessages");
 const {cmdPrefix} = config;
 
 let isDeleting = false;

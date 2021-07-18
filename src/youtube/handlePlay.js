@@ -1,7 +1,7 @@
 const {playRequest} = require("./playRequest");
-const {logger} = require("../logger");
+const {logger} = require("../helpers/logger");
 const config = require("../../config.json");
-const {timeoutDelMessages} = require("../timeoutDelMessages");
+const {timeoutDelMessages} = require("../helpers/timeoutDelMessages");
 const {cmdPrefix} = config;
 
 async function handlePlay(client, msg, voiceState) {

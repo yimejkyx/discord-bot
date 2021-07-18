@@ -1,7 +1,7 @@
-const {logger} = require("../logger");
+const {logger} = require("../helpers/logger");
 const config = require("../../config.json");
-const {stopVoiceConnection} = require("../stopVoiceConnection");
-const {timeoutDelMessages} = require("../timeoutDelMessages");
+const {stopVoiceConnection} = require("../helpers/stopVoiceConnection");
+const {timeoutDelMessages} = require("../helpers/timeoutDelMessages");
 const {cmdPrefix} = config;
 
 async function handleStop(client, msg, voiceState) {

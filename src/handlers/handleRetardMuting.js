@@ -1,7 +1,7 @@
 let isRetardMuted = false;
 let retardId = "340912921569918986";
-const config = require("../config.json");
-const {timeoutDelMessages} = require("./timeoutDelMessages");
+const config = require("../../config.json");
+const {timeoutDelMessages} = require("../helpers/timeoutDelMessages");
 
 async function handleRetardMuting(client, msg) {
     const {member} = msg;

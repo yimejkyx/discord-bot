@@ -1,7 +1,7 @@
 const path = require('path');
 
-const {logger} = require("./logger");
-const {stopVoiceConnection} = require("./stopVoiceConnection");
+const {logger} = require("../helpers/logger");
+const {stopVoiceConnection} = require("../helpers/stopVoiceConnection");
 
 
 async function handleSomebodyConnect(oldState, newState, voiceState) {

@@ -1,10 +1,10 @@
 const gifResize = require('@gumlet/gif-resize');
 const Pornsearch = require("pornsearch");
 const axios = require('axios');
-const {timeoutDelMessages} = require("./timeoutDelMessages");
 
-const {logger} = require("./logger");
-const {cmdPrefix} = require("../config.json");
+const {timeoutDelMessages} = require("../helpers/timeoutDelMessages");
+const {logger} = require("../helpers/logger");
+const {cmdPrefix} = require("../../config.json");
 
 function getRandomInt(min, max) {
     min = Math.ceil(min);
@@ -22,7 +22,6 @@ async function handlePornRequest(client, msg) {
     const {content} = msg;
 
     if (!content.startsWith(`${cmdPrefix}plsky`)) return;
-
 
     const split = content.replace(/\s\s+/g, " ").split(" ");
     if (!(split.length >= 2)) return;

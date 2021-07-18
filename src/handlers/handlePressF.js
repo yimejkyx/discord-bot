@@ -1,5 +1,5 @@
-const {timeoutDelMessages} = require("./timeoutDelMessages");
 const fs = require("fs").promises;
+const {timeoutDelMessages} = require("../helpers/timeoutDelMessages");
 
 async function readCounter() {
     let file;

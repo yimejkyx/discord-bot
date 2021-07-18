@@ -1,6 +1,6 @@
 const puppeteer = require('puppeteer');
 const stringTable = require("string-table");
-const { logger } = require("../logger");
+const { logger } = require("../helpers/logger");
 const {
     enchRecipes,
     alchRecipes,

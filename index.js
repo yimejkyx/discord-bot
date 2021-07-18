@@ -1,27 +1,25 @@
 const {token, mainChannelName} = require("./config.json");
 const Discord = require("discord.js");
-const {handleSomebodyConnect} = require("./src/handleSomebodyConnect");
-
-const {handleGasChart} = require("./src/handleGasPriceCron");
 const fs = require("fs").promises;
 
-const {handleGasPrice} = require("./src/handleGasPriceCron");
-const {getChannelByName} = require("./src/getChannelByName");
-const {handleGasPriceCron} = require("./src/handleGasPriceCron");
-const {handleExit} = require("./src/handleExit");
-
-const {logger} = require("./src/logger");
-const {handleRetardMuting} = require("./src/handleRetardMuting");
-const {handleYoutubeRequest} = require("./src/youtube/handleYoutubeRequest");
-const {handlePornRequest} = require("./src/handlePornRequest");
+const {handleSomebodyConnect} = require("./src/handlers/handleSomebodyConnect");
+const {handleGasChart, handleGasPrice} = require("./src/handlers/handleGasPriceCron");
+const {handleGasPriceCron} = require("./src/handlers/handleGasPriceCron");
+const {handleRetardMuting} = require("./src/handlers/handleRetardMuting");
+const {handlePornRequest} = require("./src/handlers/handlePornRequest");
+const {handleExit} = require("./src/handlers/handleExit");
+const {handlePressF} = require("./src/handlers/handlePressF");
+const {handleHelp} = require("./src/handlers/handleHelp");
+const {handleVotekick} = require("./src/handlers/handleVotekick");
 const {
     handleDeletingLastMessages,
-} = require("./src/handleDeletingLastMessages.js");
+} = require("./src/handlers/handleDeletingLastMessages.js");
 
-const {handlePressF} = require("./src/handlePressF");
+const {handleYoutubeRequest} = require("./src/youtube/handleYoutubeRequest");
+const {logger} = require("./src/helpers/logger");
+const {getChannelByName} = require("./src/helpers/getChannelByName");
 const {handleAuctionRequest} = require("./src/auction-house-api/handleAuctionRequest");
-const {timeoutDelMessages} = require("./src/timeoutDelMessages");
-const {handleHelp} = require("./src/handleHelp");
+const {timeoutDelMessages} = require("./src/helpers/timeoutDelMessages");
 
 
 async function main() {
@@ -44,7 +42,6 @@ async function main() {
         };
     }
     handleGasPriceCron(client, gasState);
-
 
     client.on(`voiceStateUpdate`, async (oldState, newState) => {
         handleSomebodyConnect(oldState, newState, voiceState);
@@ -78,6 +75,7 @@ async function main() {
             handleGasPrice(client, msg, gasState);
             handleExit(client, msg);
             handleGasChart(client, msg, gasState);
+            handleVotekick(client, msg);
         } catch (e) {
             console.error('Catching handle error', e);
             const reply = await msg.channel.send("Nieco sa doondialo :(((");

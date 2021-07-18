@@ -4,9 +4,9 @@ const fs = require("fs").promises;
 const vega = require("vega");
 const { MessageAttachment} = require('discord.js');
 
-const {timeoutDelMessages} = require("./timeoutDelMessages");
-const {logger} = require("./logger");
-const {defiPulseApiKey, cmdPrefix} = require("../config.json");
+const {timeoutDelMessages} = require("../helpers/timeoutDelMessages");
+const {logger} = require("../helpers/logger");
+const {defiPulseApiKey, cmdPrefix} = require("../../config.json");
 
 
 async function handleGasPriceCron(client, gasState) {

@@ -1,7 +1,7 @@
 const ytdl = require("ytdl-core");
 const yts = require("yt-search");
 
-const { logger } = require("../logger");
+const { logger } = require("../helpers/logger");
 
 async function prepareSong(requestText) {
     logger.debug('prepareSong: got request');

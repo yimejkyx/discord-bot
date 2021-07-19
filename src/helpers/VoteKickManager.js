@@ -1,5 +1,6 @@
 const {logger} = require('../helpers/logger');
 const {timeoutDelMessages} = require("../helpers/timeoutDelMessages");
+const {cmdPrefix} = require("../../config.json");
 
 function getDefaultState() {
     return {
@@ -9,7 +10,8 @@ function getDefaultState() {
         votes: null,
         timeout: null,
         channel: null,
-        guild: null
+        guild: null,
+        initMsg: null
     };
 }
 
@@ -46,11 +48,14 @@ class VoteKickManager {
         logger.log('debug', `VoteKickManager: timeoutVotekick start`);
         if (!this.lock()) return this.setupTimeout(5 * 1000);
 
-        const reply = await this.state.channel?.send(`Nepodarilo še kicknut "${this.guildMember.displayName}" :((`);
-        await timeoutDelMessages(5000, [reply]);
+        const reply = await this.state.channel?.send(`Nepodarilo še kicknut ${this.guildMember} :((`);
+        const { initMsg } = this.state;
+        const delPromise = timeoutDelMessages(5000, [reply, initMsg]);
 
         this.clearState();
         this.unlock();
+
+        await delPromise;
         logger.log('debug', `VoteKickManager: timeoutVotekick end`);
     }
 
@@ -58,7 +63,7 @@ class VoteKickManager {
         this.state.timeout = setTimeout(this.timeoutVotekick.bind(this), time); 
     }
 
-    static initState(msg, user) {
+    static async initState(msg, user) {
         logger.log('debug', `VoteKickManager: initState start`);
         this.state.user = user;
         this.state.votes = [];
@@ -71,41 +76,48 @@ class VoteKickManager {
         const voiceRoomCount =  voiceState.channel.members.reduce((sum) => sum + 1, 0);
         this.state.neededVotes = Math.ceil(voiceRoomCount * 0.5);
 
+        const countText = `**${this.state.votes.length}/${this.state.neededVotes}**`;
+        this.state.initMsg = await msg.channel.send(`*YimyKick 3000* kickujeme ${this.guildMember}!! Treba bratanov ${countText}, napis **${cmdPrefix}vk**`);
+
         this.setupTimeout();
         logger.log('debug', `VoteKickManager: initState end, needVotes ${this.state.neededVotes}`);
     }
 
     static async voteUser(votingUserId, msg) {
         logger.log('debug', `VoteKickManager: voteUser start`);
-        let reply;
 
         if (this.state.votes.includes(votingUserId)) {
-            reply = await msg.reply(`Už si votoval ty piča!! ${this.state.votes.length}/${this.state.neededVotes}`);
-            return reply;
+            return await msg.reply(`Už si votoval ty piča!!`);
         };
 
         // increase votes
         this.state.votes.push(votingUserId);
         if (this.state.votes.length >= this.state.neededVotes) {
             logger.debug(`VoteKickManager: voteUser kicking user`);
-
             await this.kickUser();
-
-            reply = await msg.reply(`AAAAANd its gone....`);
-            this.clearState();
         } else {
             logger.debug(`VoteKickManager: voteUser increase vote`);
-            reply = await msg.reply(`YimyKick 3000: kickujeme "${this.guildMember.displayName}" ${this.state.votes.length}/${this.state.neededVotes}`);
+            const countText = `**${this.state.votes.length}/${this.state.neededVotes}**`;
+            await this.state.initMsg.edit(`*YimyKick 3000* kickujeme ${this.guildMember}!! Treba bratanov ${countText}, napis **${cmdPrefix}vk**`);
         }
-        logger.log('debug', `VoteKickManager: voteUser end`);
 
-        return reply;
+        logger.log('debug', `VoteKickManager: voteUser end`);
+        return null;
     }
 
     static async kickUser() {
+        let replyPromise = this.state.channel.send(`AAAAANd its gone....`);
+
+        const { initMsg } = this.state;
+        const delPromise = timeoutDelMessages(5000, [initMsg]);
+
         const voiceState = this.state.guild.voiceStates.cache
             .find(voiceState => voiceState.id === this.state.user.id)
         await voiceState.kick();
+
+        this.clearState();
+
+        await Promise.all([delPromise, replyPromise]);
     }
 }
 

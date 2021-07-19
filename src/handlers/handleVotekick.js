@@ -1,12 +1,12 @@
-const {timeoutDelMessages} = require("../helpers/timeoutDelMessages");
-const {cmdPrefix} = require("../../config.json");
-const {logger} = require("../helpers/logger");
-const {VoteKickManager} = require("../helpers/VoteKickManager");
-const {getUserFromMention} = require("../helpers/getUserFromMention");
+const { timeoutDelMessages } = require("../helpers/timeoutDelMessages");
+const { cmdPrefix } = require("../../config.json");
+const { logger } = require("../helpers/logger");
+const { VoteKickManager } = require("../helpers/VoteKickManager");
+const { getUserFromMention } = require("../helpers/getUserFromMention");
 
 
 async function handleVotekick(client, msg) {
-    const {content} = msg;
+    const { content } = msg;
 
     const commandString = `${cmdPrefix}vk`;
     if (content.startsWith(commandString)) {
@@ -25,18 +25,22 @@ async function handleVotekick(client, msg) {
             if (args.length > 0) {
                 const user = getUserFromMention(client, args[0]);
                 if (user) {
-                    VoteKickManager.initState(msg, user);
+                    await VoteKickManager.initState(msg, user);
                     reply = await VoteKickManager.voteUser(voterId, msg);
                 } else {
                     reply = await msg.reply("Čo chybalo??? Nenašiel som panáčka...");
                 }
             } else {
                 reply = await msg.reply("Čo chybalo??? Meno");
+
             }
         }
+
         VoteKickManager.unlock();
 
-        await timeoutDelMessages(5000, [reply, msg]);
+        await Promise.all([timeoutDelMessages(0, [msg]),
+        timeoutDelMessages(5000, [reply])]
+        );
     }
 }
 

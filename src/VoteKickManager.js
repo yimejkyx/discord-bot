@@ -1,6 +1,6 @@
-const {logger} = require('../helpers/logger');
-const {timeoutDelMessages} = require("../helpers/timeoutDelMessages");
-const {cmdPrefix} = require("../../config.json");
+const {logger} = require('./helpers/logger');
+const {timeoutDelMessages} = require("./helpers/timeoutDelMessages");
+const {cmdPrefix} = require("../config.json");
 
 function getDefaultState() {
     return {
@@ -106,18 +106,19 @@ class VoteKickManager {
     }
 
     static async kickUser() {
-        let replyPromise = this.state.channel.send(`AAAAANd its gone....`);
+        let reply = await this.state.channel.send(`AAAAANd its gone....`);
+        const {  guild, user, initMsg } = this.state;
 
-        const { initMsg } = this.state;
-        const delPromise = timeoutDelMessages(5000, [initMsg]);
+        const voiceState = guild.voiceStates.cache
+            .find(voiceState => voiceState.id === user.id)
 
-        const voiceState = this.state.guild.voiceStates.cache
-            .find(voiceState => voiceState.id === this.state.user.id)
-        await voiceState.kick();
+        await Promise.all([
+            voiceState.kick(),
+            timeoutDelMessages(0, [initMsg]),
+            timeoutDelMessages(5000, [reply])
+        ]);
 
         this.clearState();
-
-        await Promise.all([delPromise, replyPromise]);
     }
 }
 

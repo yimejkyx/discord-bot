@@ -1,36 +1,29 @@
-const {token, mainChannelName} = require("./config.json");
+const { token, mainChannelName } = require("./config.json");
 const Discord = require("discord.js");
 const fs = require("fs").promises;
 
-const {handleSomebodyConnect} = require("./src/handlers/handleSomebodyConnect");
-const {handleGasChart, handleGasPrice} = require("./src/handlers/handleGasPriceCron");
-const {handleGasPriceCron} = require("./src/handlers/handleGasPriceCron");
-const {handleRetardMuting} = require("./src/handlers/handleRetardMuting");
-const {handlePornRequest} = require("./src/handlers/handlePornRequest");
-const {handleExit} = require("./src/handlers/handleExit");
-const {handlePressF} = require("./src/handlers/handlePressF");
-const {handleHelp} = require("./src/handlers/handleHelp");
-const {handleVotekick} = require("./src/handlers/handleVotekick");
+const { handleSomebodyConnect } = require("./src/handlers/handleSomebodyConnect");
+const { handleGasChart, handleGasPrice } = require("./src/handlers/handleGasPriceCron");
+const { handleGasPriceCron } = require("./src/handlers/handleGasPriceCron");
+const { handleRetardMuting } = require("./src/handlers/handleRetardMuting");
+const { handlePornRequest } = require("./src/handlers/handlePornRequest");
+const { handleExit } = require("./src/handlers/handleExit");
+const { handlePressF } = require("./src/handlers/handlePressF");
+const { handleHelp } = require("./src/handlers/handleHelp");
+const { handleVotekick } = require("./src/handlers/handleVotekick");
 const {
     handleDeletingLastMessages,
 } = require("./src/handlers/handleDeletingLastMessages.js");
 
-const {handleYoutubeRequest} = require("./src/youtube/handleYoutubeRequest");
-const {logger} = require("./src/helpers/logger");
-const {getChannelByName} = require("./src/helpers/getChannelByName");
-const {handleAuctionRequest} = require("./src/auction-house-api/handleAuctionRequest");
-const {timeoutDelMessages} = require("./src/helpers/timeoutDelMessages");
+const { handleYoutubeRequest } = require("./src/youtube/handleYoutubeRequest");
+const { logger } = require("./src/helpers/logger");
+const { getChannelByName } = require("./src/helpers/getChannelByName");
+const { handleAuctionRequest } = require("./src/auction-house-api/handleAuctionRequest");
+const { timeoutDelMessages } = require("./src/helpers/timeoutDelMessages");
 
 
 async function main() {
     const client = new Discord.Client();
-
-    const voiceState = {
-        lock: false,
-        connection: null,
-        stoppingTimeout: null
-    };
-
     let gasState = null;
     try {
         const file = await fs.readFile("./gasState.json", "utf8");
@@ -43,9 +36,7 @@ async function main() {
     }
     handleGasPriceCron(client, gasState);
 
-    client.on(`voiceStateUpdate`, async (oldState, newState) => {
-        handleSomebodyConnect(oldState, newState, voiceState);
-    });
+    client.on(`voiceStateUpdate`, async (oldState, newState) => handleSomebodyConnect(oldState, newState));
 
     client.on("ready", async () => {
         logger.info("Connected");
@@ -55,9 +46,9 @@ async function main() {
     });
 
     client.on("message", async (msg) => {
-        const {member} = msg;
+        const { member } = msg;
         if (member) {
-            const {username} = member.user;
+            const { username } = member.user;
             logger.debug(`received message ${username}:${msg.channel}: ${msg}`);
         } else {
             logger.debug(`received message anon:${msg.channel}: ${msg}`);
@@ -67,7 +58,7 @@ async function main() {
         try {
             handleHelp(client, msg);
             handleRetardMuting(client, msg);
-            handleYoutubeRequest(client, msg, voiceState);
+            handleYoutubeRequest(client, msg);
             handlePornRequest(client, msg);
             handleDeletingLastMessages(client, msg);
             handlePressF(client, msg);

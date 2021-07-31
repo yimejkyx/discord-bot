@@ -1,7 +1,7 @@
 const { timeoutDelMessages } = require("../helpers/timeoutDelMessages");
 const { cmdPrefix } = require("../../config.json");
 const { logger } = require("../helpers/logger");
-const { VoteKickManager } = require("../helpers/VoteKickManager");
+const { VoteKickManager } = require("../VoteKickManager");
 const { getUserFromMention } = require("../helpers/getUserFromMention");
 
 

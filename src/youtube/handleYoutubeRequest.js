@@ -2,12 +2,12 @@ const {handleStop} = require("./handleStop");
 const {handlePlay} = require("./handlePlay");
 
 
-async function handleYoutubeRequest(client, msg, voiceState) {
+async function handleYoutubeRequest(client, msg) {
     const {member} = msg;
 
     if (member) {
-        handleStop(client, msg, voiceState);
-        handlePlay(client, msg, voiceState);
+        handleStop(client, msg);
+        handlePlay(client, msg);
     }
 }
 

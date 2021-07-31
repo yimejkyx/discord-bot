@@ -1,31 +1,32 @@
-const {playRequest} = require("./playRequest");
-const {logger} = require("../helpers/logger");
+const { playRequest } = require("./playRequest");
+const { logger } = require("../helpers/logger");
 const config = require("../../config.json");
-const {timeoutDelMessages} = require("../helpers/timeoutDelMessages");
-const {cmdPrefix} = config;
+const { timeoutDelMessages } = require("../helpers/timeoutDelMessages");
+const { VoiceManager } = require("../VoiceManager");
+const { cmdPrefix } = config;
 
-async function handlePlay(client, msg, voiceState) {
-    const {content, member: {voice}} = msg;
+async function handlePlay(client, msg) {
+    const { content, member: { voice } } = msg;
 
     if (!content.startsWith(`${cmdPrefix}play`)) return;
-    if (voiceState.lock) {
+
+    if (!VoiceManager.lock()) {
         const reply = await msg.reply("Cannot play song right now :((");
         await timeoutDelMessages(5000, [reply, msg]);
         return;
     }
-    voiceState.lock = true;
 
     if (!voice.channel) {
         const reply = await msg.reply("You need to join a voice channel first!");
         await timeoutDelMessages(5000, [reply, msg]);
-        voiceState.lock = false;
+        VoiceManager.unlock();
         return;
     }
 
-    if (voiceState.connection) {
+    if (VoiceManager.isConnected()) {
         const reply = await msg.reply("Cant play another video!");
         await timeoutDelMessages(5000, [reply, msg]);
-        voiceState.lock = false;
+        VoiceManager.unlock();
         return;
     }
 
@@ -36,13 +37,13 @@ async function handlePlay(client, msg, voiceState) {
 
         if (parsedText) {
             logger.info(`handlePlay: playing "${parsedText}"`);
-            await playRequest(msg, parsedText, voice, voiceState);
+            await playRequest(msg, parsedText, voice);
         } else {
             logger.error(`handlePlay: invalid request "${requestText}"`);
         }
     }
 
-    voiceState.lock = false;
+    VoiceManager.unlock();
 }
 
 module.exports = {

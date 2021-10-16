@@ -16,7 +16,7 @@ async function handleVotekick(client, msg) {
         const voterId = msg.member.id;
         logger.debug(`handleVotekick: I am inside ${args}`);
 
-        let reply = null;
+        let reply;
         if (VoteKickManager.hasActiveVoting()) {
             logger.debug('handleVotekick: increasing votekick');
             reply = await VoteKickManager.voteUser(voterId, msg);

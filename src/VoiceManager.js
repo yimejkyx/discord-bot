@@ -30,6 +30,11 @@ class VoiceManager {
         if (this.isConnected()) throw new Error('Already connected');
 
         this.state.connection = await voiceChannel.join();
+        this.state.connection.on('disconnect', () => {
+            logger.info("VoiceManager.join:disconnect event: cleaning connection");
+            this.state.connection = null;
+            this.leave();
+        });
     }
 
     static async cleanTimeout() {
@@ -67,10 +72,10 @@ class VoiceManager {
             this.cleanTimeout();
 
             if (this.isConnected()) {
-                await this.state.connection.channel.leave();
-                this.state.connection.disconnect();
-                this.state.connection = null;
+                await this.state.connection?.channel?.leave();
+                this.state.connection?.disconnect();
             }
+            this.state.connection = null;
     
             logger.info("VoiceManager.leave: cleaning connection");
         } catch (e) {

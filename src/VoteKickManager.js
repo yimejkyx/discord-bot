@@ -63,6 +63,19 @@ class VoteKickManager {
         this.state.timeout = setTimeout(this.timeoutVotekick.bind(this), time); 
     }
 
+    static getInitMsgText() {
+        const countText = `**${this.state.votes.length}/${this.state.neededVotes}**`;
+        return `*YimyKick 3000* kickujeme ${this.guildMember}!! Treba bratanov ${countText}, napis **${cmdPrefix}vk**`;
+    }
+
+    static async updateInitMsg(msg) {
+        if (!this.state.initMsg || this.state.initMsg.deleted) {
+            this.state.initMsg = await msg.channel.send(this.getInitMsgText());
+        } else if (this.state.initMsg) {
+            await this.state.initMsg.edit(this.getInitMsgText());
+        }
+    }
+
     static async initState(msg, user) {
         logger.log('debug', `VoteKickManager: initState start`);
         this.state.user = user;
@@ -75,9 +88,7 @@ class VoteKickManager {
         const voiceState = this.state.guild.voiceStates.cache.find(voiceState => voiceState.id === msg.member.id);
         const voiceRoomCount =  voiceState.channel.members.reduce((sum) => sum + 1, 0);
         this.state.neededVotes = Math.ceil(voiceRoomCount * 0.5);
-
-        const countText = `**${this.state.votes.length}/${this.state.neededVotes}**`;
-        this.state.initMsg = await msg.channel.send(`*YimyKick 3000* kickujeme ${this.guildMember}!! Treba bratanov ${countText}, napis **${cmdPrefix}vk**`);
+        await this.updateInitMsg(msg);
 
         this.setupTimeout();
         logger.log('debug', `VoteKickManager: initState end, needVotes ${this.state.neededVotes}`);
@@ -88,7 +99,7 @@ class VoteKickManager {
 
         if (this.state.votes.includes(votingUserId)) {
             return await msg.reply(`Už si votoval ty piča!!`);
-        };
+        }
 
         // increase votes
         this.state.votes.push(votingUserId);
@@ -97,8 +108,7 @@ class VoteKickManager {
             await this.kickUser();
         } else {
             logger.debug(`VoteKickManager: voteUser increase vote`);
-            const countText = `**${this.state.votes.length}/${this.state.neededVotes}**`;
-            await this.state.initMsg.edit(`*YimyKick 3000* kickujeme ${this.guildMember}!! Treba bratanov ${countText}, napis **${cmdPrefix}vk**`);
+            await this.updateInitMsg(msg);
         }
 
         logger.log('debug', `VoteKickManager: voteUser end`);

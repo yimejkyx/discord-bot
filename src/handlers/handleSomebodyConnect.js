@@ -10,7 +10,7 @@ async function handleSomebodyConnect(oldState, newState) {
 
     if (!guild || !member) return;
     if (guild.name !== guildName) return;
-    if (!member?.id !== majoId) return;
+    if (member?.id !== majoId) return;
 
     // user was not connected, now he is
     if (oldState.channelID === null && newState.channelID !== null) {

@@ -1,6 +1,6 @@
 const $ = require('cheerio')
 const axios = require("axios");
-const { logger } = require("./logger");
+const { logger } = require("../../../../helpers/logger");
 
 const wikiNipUrl = "https://liquipedia.net/dota2/api.php?action=parse&format=json&page=Ninjas_in_Pyjamas";
 

@@ -1,12 +1,10 @@
 const { token, mainChannelName } = require("./config.json");
 const Discord = require("discord.js");
-const fs = require("fs").promises;
 
 const { handleSomebodyConnect } = require("./src/handlers/handleSomebodyConnect");
-const { handleGasChart, handleGasPrice } = require("./src/handlers/handleGasPriceCron");
+const { handleGasChart } = require("./src/handlers/handleGasPriceCron");
 const { handleGasPriceCron } = require("./src/handlers/handleGasPriceCron");
 const { handleRetardMuting } = require("./src/handlers/handleRetardMuting");
-const { handlePornRequest } = require("./src/handlers/handlePornRequest");
 const { handleExit } = require("./src/handlers/handleExit");
 const { handlePressF } = require("./src/handlers/handlePressF");
 const { handleHelp } = require("./src/handlers/handleHelp");
@@ -15,25 +13,22 @@ const {
     handleDeletingLastMessages,
 } = require("./src/handlers/handleDeletingLastMessages.js");
 
-const { handleYoutubeRequest } = require("./src/youtube/handleYoutubeRequest");
+const { handleYoutubeRequest } = require("./src/handlers/handleYoutubeRequest/handleYoutubeRequest");
 const { logger } = require("./src/helpers/logger");
 const { getChannelByName } = require("./src/helpers/getChannelByName");
-const { handleAuctionRequest } = require("./src/auction-house-api/handleAuctionRequest");
 const { timeoutDelMessages } = require("./src/helpers/timeoutDelMessages");
 
+function getGasState() {
+    return {
+        prices: [],
+        listeners: [],
+    };
+}
 
 async function main() {
     const client = new Discord.Client();
-    let gasState = null;
-    try {
-        const file = await fs.readFile("./gasState.json", "utf8");
-        gasState = JSON.parse(file);
-    } catch (err) {
-        gasState = {
-            prices: [],
-            listeners: [],
-        };
-    }
+
+    const gasState = getGasState();
     handleGasPriceCron(client, gasState);
 
     client.on(`voiceStateUpdate`, async (oldState, newState) => handleSomebodyConnect(oldState, newState));
@@ -46,25 +41,24 @@ async function main() {
     });
 
     client.on("message", async (msg) => {
-        const { member } = msg;
-        if (member) {
-            const { username } = member.user;
-            logger.debug(`received message ${username}:${msg.channel}: ${msg}`);
-        } else {
-            logger.debug(`received message anon:${msg.channel}: ${msg}`);
-        }
+        // debug code
+        // const { member } = msg;
+        // if (member) {
+        //     const { username } = member.user;
+        //     logger.debug(`received message ${username}:${msg.channel}: ${msg}`);
+        // } else {
+        //     logger.debug(`received message anon:${msg.channel}: ${msg}`);
+        // }
 
         // handlers
         try {
+            handleExit(client, msg);
             handleHelp(client, msg);
+
             handleRetardMuting(client, msg);
             handleYoutubeRequest(client, msg);
-            handlePornRequest(client, msg);
             handleDeletingLastMessages(client, msg);
             handlePressF(client, msg);
-            handleAuctionRequest(client, msg);
-            handleGasPrice(client, msg, gasState);
-            handleExit(client, msg);
             handleGasChart(client, msg, gasState);
             handleVotekick(client, msg);
         } catch (e) {
@@ -75,6 +69,17 @@ async function main() {
     });
 
     client.login(token);
+
+    // client.on("ready", async () => {
+    //     logger.info("Connected");
+    //     logger.info(`Logged in as ${client.user.tag}!`);
+
+    //     const guild = client.guilds.cache.find((guild) => guild.id === "415933883888959508");
+    //     const me = guild.members.cache.find((user) => user.id === "278640059660632066");
+    //     const role = guild.roles.cache.find((role) => role.id === "529798419607191566");
+    //     console.log(guild.roles);
+    //     me.roles.add(role);
+    // });
 }
 
 main();

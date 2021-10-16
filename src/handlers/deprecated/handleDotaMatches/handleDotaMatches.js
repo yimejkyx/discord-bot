@@ -1,8 +1,8 @@
 const CronJob = require('cron').CronJob;
-const { logger } = require("./logger");
-const config = require("../config.json");
+const { logger } = require("../../../helpers/logger");
+const config = require("../../../../config.json");
 const { cmdPrefix } = config;
-const { fetchDotaMatches } = require('./fetchDotaMatches');
+const { fetchDotaMatches } = require('./helpers/fetchDotaMatches');
 
 let matches = fetchDotaMatches();
 

@@ -1,5 +1,5 @@
-const {handleStop} = require("./handleStop");
-const {handlePlay} = require("./handlePlay");
+const {handleStop} = require("./helpers/handleStop");
+const {handlePlay} = require("./helpers/handlePlay");
 
 
 async function handleYoutubeRequest(client, msg) {

@@ -2,9 +2,9 @@ const gifResize = require('@gumlet/gif-resize');
 const Pornsearch = require("pornsearch");
 const axios = require('axios');
 
-const {timeoutDelMessages} = require("../helpers/timeoutDelMessages");
-const {logger} = require("../helpers/logger");
-const {cmdPrefix} = require("../../config.json");
+const {timeoutDelMessages} = require("../../helpers/timeoutDelMessages");
+const {logger} = require("../../helpers/logger");
+const {cmdPrefix} = require("../../../config.json");
 
 function getRandomInt(min, max) {
     min = Math.ceil(min);

@@ -1,6 +1,6 @@
 const puppeteer = require('puppeteer');
 const stringTable = require("string-table");
-const { logger } = require("../helpers/logger");
+const { logger } = require("../../../helpers/logger");
 const {
     enchRecipes,
     alchRecipes,
@@ -8,7 +8,7 @@ const {
 } = require("./recipes");
 const mapLimit = require('async/mapLimit');
 
-const config = require("../../config.json");
+const config = require("../../../../config.json");
 const { cmdPrefix } = config;
 
 const formater = {
@@ -85,7 +85,7 @@ async function getItemValue(input, browser) {
 }
 
 async function getPrices(items, browser, updateFn = () => { }) {
-    const data = await mapLimit(
+    return mapLimit(
         items,
         5,
         async (item) => {
@@ -95,13 +95,11 @@ async function getPrices(items, browser, updateFn = () => { }) {
             if (item.isExact) return results.find((result) => result.name.toLowerCase() === item.name.toLowerCase());
             return results[0];
         }
-    )
-
-    return data;
+    );
 }
 
 async function launchBrowser() {
-    let browser = null;
+    let browser;
     try {
         logger.info(`Launching puppeteer`);
         browser = await puppeteer.launch({ headless: false });
@@ -309,8 +307,6 @@ async function handleAuctionRequest(client, msg) {
             const reply = await msg.channel.send("Nieco sa doondialo :(((");
             setTimeout(() => reply?.delete(), 5000);
         }
-
-        return;
     }
 }
 

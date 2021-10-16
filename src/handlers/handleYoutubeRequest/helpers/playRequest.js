@@ -1,7 +1,7 @@
-const { timeoutDelMessages } = require("../helpers/timeoutDelMessages");
-const { logger } = require("../helpers/logger");
+const { timeoutDelMessages } = require("../../../helpers/timeoutDelMessages");
+const { logger } = require("../../../helpers/logger");
 const { prepareSong } = require('./prepareSong');
-const { VoiceManager } = require("../VoiceManager");
+const { VoiceManager } = require("../../../VoiceManager");
 
 
 async function playRequest(msg, requestText, voice) {

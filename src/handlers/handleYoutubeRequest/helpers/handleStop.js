@@ -1,8 +1,8 @@
-const { logger } = require("../helpers/logger");
-const config = require("../../config.json");
+const { logger } = require("../../../helpers/logger");
+const config = require("../../../../config.json");
 
-const { timeoutDelMessages } = require("../helpers/timeoutDelMessages");
-const { VoiceManager } = require("../VoiceManager");
+const { timeoutDelMessages } = require("../../../helpers/timeoutDelMessages");
+const { VoiceManager } = require("../../../VoiceManager");
 const { cmdPrefix } = config;
 
 async function handleStop(client, msg) {

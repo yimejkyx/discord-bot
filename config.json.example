@@ -1,4 +1,4 @@
-nfigo{
+{
   "token": "INSERT-TOKEN",
   "cmdPrefix": "y",
   "canDeleteMessages": ["admin-perm-role"],

@@ -1,8 +1,8 @@
-{
+nfigo{
   "token": "INSERT-TOKEN",
   "cmdPrefix": "y",
   "canDeleteMessages": ["admin-perm-role"],
   "canMuteRetard": ["admin-perm-role"],
-  "mainChannelName": "little-italy",
+  "mainChannelName": "chat☻",
   "defiPulseApiKey": "INSERT-DEFI-PULSE-TOKEN"
 }

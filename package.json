@@ -5,7 +5,6 @@
   "main": "src/index.js",
   "type": "module",
   "scripts": {
-    "start:prod": "npx pm2 start index.js",
     "start": "npx babel-node ./src/index.js --experimental-modules --es-module-specifier-resolution=node",
     "dev": "nodemon --exec npm run babel-node -- ./src/index.js --experimental-modules --es-module-specifier-resolution=node",
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -26,7 +25,6 @@
     "eslint-config-standard": "^17.0.0-1",
     "ffmpeg-static": "^4.4.0",
     "opusscript": "0.0.7",
-    "pm2": "^5.1.0",
     "pornsearch": "^0.3.1",
     "puppeteer": "^5.5.0",
     "string-table": "^0.1.5",

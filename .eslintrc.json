@@ -1,0 +1,26 @@
+{
+    "parser": "@babel/eslint-parser",
+    "plugins": [
+        "prettier",
+        "standard"
+    ],
+    "env": {
+        "es2022": true,
+        "node": true
+    },
+    "extends": [
+        "standard",
+        "prettier"
+    ],
+    "parserOptions": {
+        "ecmaVersion": 13,
+        "sourceType": "module"
+    },
+    "rules": {
+      "import/extensions": ["error", "ignorePackages", {
+        "js": "never",
+        "mjs": "never"
+      }],
+      "prettier/prettier": "error"
+    }
+}

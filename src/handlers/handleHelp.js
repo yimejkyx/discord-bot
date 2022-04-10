@@ -1,15 +1,12 @@
-const {timeoutDelMessages} = require("../helpers/timeoutDelMessages");
-const {cmdPrefix} = require("../../config.json");
+import { timeoutDelMessages } from "../helpers/timeoutDelMessages";
+import config from "../../config.json";
+const { cmdPrefix } = config;
 
-async function handleHelp(client, msg) {
-    const {content} = msg;
+export async function handleHelp(client, msg) {
+  const { content } = msg;
 
-    if (content === `${cmdPrefix}help`) {
-        const reply = await msg.reply("Tromiks je retard");
-        await timeoutDelMessages(5000, [reply, msg]);
-    }
+  if (content === `${cmdPrefix}help`) {
+    const reply = await msg.reply("Tromiks je retard");
+    await timeoutDelMessages(5000, [reply, msg]);
+  }
 }
-
-module.exports = {
-    handleHelp
-};

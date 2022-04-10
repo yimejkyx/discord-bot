@@ -1,41 +1,49 @@
-const $ = require('cheerio')
+const $ = require("cheerio");
 const axios = require("axios");
 const { logger } = require("../../../../helpers/logger");
 
-const wikiNipUrl = "https://liquipedia.net/dota2/api.php?action=parse&format=json&page=Ninjas_in_Pyjamas";
+const wikiNipUrl =
+  "https://liquipedia.net/dota2/api.php?action=parse&format=json&page=Ninjas_in_Pyjamas";
 
 async function fetchDotaMatches() {
-  logger.info("fetching dota matches")
+  logger.info("fetching dota matches");
   try {
     const response = await axios({
-      method: 'GET',
+      method: "GET",
       url: wikiNipUrl,
       headers: {
         "Accept-Encoding": "gzip",
-        "User-Agent": "PersonalDiscordBot/0.1 (nikolas.tsk@gmail.com)"
-      }
+        "User-Agent": "PersonalDiscordBot/0.1 (nikolas.tsk@gmail.com)",
+      },
     });
 
-    logger.debug('DEBUG got response');
+    logger.debug("DEBUG got response");
     const html = response.data.parse.text["*"];
-    const content = $.load(html)('div.fo-nttax-infobox-wrapper table.infobox_matches_content')
-    const matches = []
+    const content = $.load(html)(
+      "div.fo-nttax-infobox-wrapper table.infobox_matches_content"
+    );
+    const matches = [];
 
-    logger.debug('DEBUG parsing content');
+    logger.debug("DEBUG parsing content");
     content.each((_, el) => {
-      const teamLeft = $(el).find('.team-left');
-      const teamRight = $(el).find('.team-right');
-      const matchInfo = $(el).find('.match-filler');
+      const teamLeft = $(el).find(".team-left");
+      const teamRight = $(el).find(".team-right");
+      const matchInfo = $(el).find(".match-filler");
 
       if (teamLeft.html() && teamRight.html()) {
-        const timeText = matchInfo.find('.timer-object').text().replace(',', '').replace('-', '').replace(/\s\s+/g, ' ');
+        const timeText = matchInfo
+          .find(".timer-object")
+          .text()
+          .replace(",", "")
+          .replace("-", "")
+          .replace(/\s\s+/g, " ");
         const match = {
-          teamLeft: teamLeft.find('a').text() || 'TBD',
-          teamRight: teamRight.find('a').text() || 'TBD',
+          teamLeft: teamLeft.find("a").text() || "TBD",
+          teamRight: teamRight.find("a").text() || "TBD",
           date: new Date(timeText),
-          url: `https://liquipedia.net${matchInfo.find('a').attr('href')}`,
-        }
-        matches.push(match)
+          url: `https://liquipedia.net${matchInfo.find("a").attr("href")}`,
+        };
+        matches.push(match);
       }
     });
 
@@ -48,5 +56,5 @@ async function fetchDotaMatches() {
 }
 
 module.exports = {
-  fetchDotaMatches
-}
+  fetchDotaMatches,
+};

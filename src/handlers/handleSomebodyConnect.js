@@ -1,48 +1,54 @@
-const path = require('path');
+import path from "path";
+import { fileURLToPath } from "url";
 
-const { logger } = require("../helpers/logger");
-const { VoiceManager } = require('../VoiceManager');
-const majoId = '246927069127114754';
-const guildName = `The City of Lost Heaven`;
+import { logger } from "../helpers/logger";
+import { VoiceManager } from "../VoiceManager";
 
-async function handleSomebodyConnect(oldState, newState) {
-    const { guild, member } = oldState;
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-    if (!guild || !member) return;
-    if (guild.name !== guildName) return;
-    if (member?.id !== majoId) return;
+const majoId = "246927069127114754";
+const guildId = "415933883888959508";
 
-    // user was not connected, now he is
-    if (oldState.channelID === null && newState.channelID !== null) {
-        const { voice } = newState.member;
+export async function handleSomebodyConnect(oldState, newState) {
+  const { guild, member } = oldState;
 
-        if (!VoiceManager.lock()) return;
+  if (!guild || !member) return;
+  if (guild.id.toString() !== guildId.toString()) return;
+  logger.debug(
+    `handleSomebodyConnect: user connected: ${member?.id}, ${majoId}`
+  );
+  if (member?.id.toString() !== majoId.toString()) return;
 
-        // if user doesnt have channel or if bot is connected in some channel
-        if (!voice.channel || VoiceManager.isConnected()) {
-            VoiceManager.unlock();
-            return;
-        }
+  // user was not connected, now he is
+  logger.debug(
+    `handleSomebodyConnect: majo connected to some channel, ${oldState.channelID}, ${newState.channelID}`
+  );
+  if (oldState.channelID === null && newState.channelID !== null) {
+    const { voice } = newState.member;
 
-        try {
-            const songInfo = {
-                'title': `Tokok Ojam`,
-                'videoLengthMs': 4000,
-                'song': path.join(__dirname, '../assets/tokok-ojam.mp3')
-            }
+    if (!VoiceManager.lock()) return;
 
-            await VoiceManager.join(voice.channel);
-            VoiceManager.play(songInfo);
-        } catch (err) {
-            await VoiceManager.leave();
-            logger.error(`handleSomebodyConnect:error: got error, ${err}`);
-        }
-
-        VoiceManager.unlock();
+    // if user does not have channel or if bot is connected in some channel
+    if (!voice.channel || VoiceManager.isConnected()) {
+      VoiceManager.unlock();
+      return;
     }
-}
 
+    try {
+      const songInfo = {
+        title: "Tokok Ojam",
+        videoLength: 4,
+        videoLengthMs: 4000,
+        song: path.join(__dirname, "../assets/tokok-ojam.mp3"),
+      };
 
-module.exports = {
-    handleSomebodyConnect
+      await VoiceManager.join(voice.channel);
+      VoiceManager.play(songInfo);
+    } catch (err) {
+      await VoiceManager.leave();
+      logger.error(`handleSomebodyConnect:error: got error, ${err}`);
+    }
+
+    VoiceManager.unlock();
+  }
 }

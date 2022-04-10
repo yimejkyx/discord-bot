@@ -6,6 +6,6 @@ services:
       context: .
       dockerfile: ./Dockerfile
     volumes:
-      - ./config.json:/app/config.json
-      - ./pressCounter.json:/app/pressCounter.json
+      - ${PWD}/config.json:/app/config.json
+      - ${PWD}/pressCounter.json:/app/pressCounter.json
       - /var/log/discordbot.log:/app/combined.log

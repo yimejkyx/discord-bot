@@ -1,28 +1,24 @@
-const { logger } = require("../../../helpers/logger");
-const config = require("../../../../config.json");
+import { logger } from "../../../helpers/logger";
+import config from "../../../../config.json";
 
-const { timeoutDelMessages } = require("../../../helpers/timeoutDelMessages");
-const { VoiceManager } = require("../../../VoiceManager");
+import { timeoutDelMessages } from "../../../helpers/timeoutDelMessages";
+import { VoiceManager } from "../../../VoiceManager";
 const { cmdPrefix } = config;
 
-async function handleStop(client, msg) {
-    const { content } = msg;
+export async function handleStop(client, msg) {
+  const { content } = msg;
 
-    if (content !== `${cmdPrefix}stop`) return;
+  if (content !== `${cmdPrefix}stop`) return;
 
-    if (!VoiceManager.lock()) {
-        logger.debug('handleStop: lock stop');
-        return;
-    }
+  if (!VoiceManager.lock()) {
+    logger.debug("handleStop: lock stop");
+    return;
+  }
 
-    const reply = await msg.reply("stoping actual video");
-    logger.info("handleStop: stop video executed");
-    timeoutDelMessages(5000, [reply, msg]);
-    await VoiceManager.leave();
+  const reply = await msg.reply("stoping actual video");
+  logger.info("handleStop: stop video executed");
+  timeoutDelMessages(5000, [reply, msg]);
+  await VoiceManager.leave();
 
-    VoiceManager.unlock();
+  VoiceManager.unlock();
 }
-
-module.exports = {
-    handleStop,
-};

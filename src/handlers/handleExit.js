@@ -1,17 +1,13 @@
-const {timeoutDelMessages} = require("../helpers/timeoutDelMessages");
-const {cmdPrefix} = require("../../config.json");
+import { timeoutDelMessages } from "../helpers/timeoutDelMessages";
+import config from "../../config.json";
+const { cmdPrefix } = config;
 
-async function handleExit(client, msg) {
-    const {content} = msg;
+export async function handleExit(client, msg) {
+  const { content } = msg;
 
-    if (content === `${cmdPrefix}exit`) {
-        const reply = await msg.channel.send("Idem si to hodit :((");
-        await timeoutDelMessages(5000, [reply, msg]);
-        process.exit(0);
-    }
+  if (content === `${cmdPrefix}exit`) {
+    const reply = await msg.channel.send("Idem si to hodit :((");
+    await timeoutDelMessages(5000, [reply, msg]);
+    process.exit(0);
+  }
 }
-
-
-module.exports = {
-    handleExit
-};

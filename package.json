@@ -2,12 +2,15 @@
   "name": "discord_bot",
   "version": "1.0.1",
   "description": "",
-  "main": "index.js",
+  "main": "src/index.js",
+  "type": "module",
   "scripts": {
     "start:prod": "npx pm2 start index.js",
-    "start": "node index.js",
-    "dev": "nodemon index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "npx babel-node ./src/index.js --experimental-modules --es-module-specifier-resolution=node",
+    "dev": "nodemon --exec npm run babel-node -- ./src/index.js --experimental-modules --es-module-specifier-resolution=node",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "npx eslint --ext .js src",
+    "lint:fix": "npx eslint --ext .js src --fix"
   },
   "author": "",
   "license": "ISC",
@@ -20,6 +23,7 @@
     "cheerio": "^1.0.0-rc.10",
     "cron": "^1.8.2",
     "discord.js": "^12.5.3",
+    "eslint-config-standard": "^17.0.0-1",
     "ffmpeg-static": "^4.4.0",
     "opusscript": "0.0.7",
     "pm2": "^5.1.0",
@@ -29,9 +33,20 @@
     "vega": "^5.20.2",
     "winston": "^3.3.3",
     "yt-search": "^2.10.2",
-    "ytdl-core": "^4.9.1"
+    "ytdl-core": "^4.11.0"
   },
   "devDependencies": {
-    "nodemon": "^2.0.12"
+    "@babel/cli": "^7.17.6",
+    "@babel/core": "^7.17.9",
+    "@babel/eslint-parser": "^7.17.0",
+    "@babel/node": "^7.16.8",
+    "@babel/preset-env": "^7.16.11",
+    "eslint": "^8.13.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "eslint-plugin-standard": "^5.0.0",
+    "nodemon": "^2.0.12",
+    "prettier": "2.6.2"
   }
 }

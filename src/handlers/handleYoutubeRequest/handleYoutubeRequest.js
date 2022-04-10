@@ -1,16 +1,11 @@
-const {handleStop} = require("./helpers/handleStop");
-const {handlePlay} = require("./helpers/handlePlay");
+import { handleStop } from "./helpers/handleStop";
+import { handlePlay } from "./helpers/handlePlay";
 
+export async function handleYoutubeRequest(client, msg) {
+  const { member } = msg;
 
-async function handleYoutubeRequest(client, msg) {
-    const {member} = msg;
-
-    if (member) {
-        handleStop(client, msg);
-        handlePlay(client, msg);
-    }
+  if (member) {
+    handleStop(client, msg);
+    handlePlay(client, msg);
+  }
 }
-
-module.exports = {
-    handleYoutubeRequest,
-};
